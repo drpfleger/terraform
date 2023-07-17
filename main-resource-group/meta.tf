@@ -4,3 +4,7 @@ data "azurerm_resource_group" "main" {
 
 data "azurerm_client_config" "main" {
 }
+
+data "azuread_group" "admin_group" {
+  display_name = "admin-${var.project}"
+}
