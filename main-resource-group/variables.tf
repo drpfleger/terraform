@@ -24,6 +24,12 @@ variable "environment" {
   }
 }
 
+variable "admin_group_name" {
+  description = "Name of the entra id admin group"
+  type        = string
+  default     = ""
+}
+
 variable "use_diagnostic_settings" {
   description = "True, when the diagnostic settings must be created"
   type        = bool

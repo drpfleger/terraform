@@ -6,5 +6,5 @@ data "azurerm_client_config" "main" {
 }
 
 data "azuread_group" "admin_group" {
-  display_name = "admin-${var.project}"
+  display_name = local.admin_group_name
 }
