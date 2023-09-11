@@ -28,3 +28,13 @@ variable "diagnostic_name" {
   type        = string
   default     = "diag-default"
 }
+
+variable "destination_type" {
+  description = "Default is AzureDiagnostics. When set to Dedicated, logs sent to a Log Analytics workspace will go into resource specific tables."
+  type        = string
+  default     = "AzureDiagnostics"
+  validation {
+    condition     = var.destination_type == "AzureDiagnostics" || var.destination_type == "Dedicated"
+    error_message = "Must be AzureDiagnostics or Dedicated"
+  }
+}
