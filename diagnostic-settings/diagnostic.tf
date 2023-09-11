@@ -9,10 +9,6 @@ resource "azurerm_monitor_diagnostic_setting" "diagnostic" {
     for_each = local.category_types == null ? [] : local.category_types
     content {
       category = enabled_log.value
-
-      retention_policy {
-        enabled = false
-      }
     }
   }
 
@@ -21,10 +17,6 @@ resource "azurerm_monitor_diagnostic_setting" "diagnostic" {
     content {
       category = metric.value
       enabled  = true
-
-      retention_policy {
-        enabled = false
-      }
     }
   }
 }
