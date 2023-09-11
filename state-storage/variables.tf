@@ -12,7 +12,6 @@ variable "location" {
 variable "project" {
   description = "the project name"
   type        = string
-  default     = "zombie"
 }
 
 variable "environment" {
