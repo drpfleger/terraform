@@ -38,5 +38,5 @@ resource "azurerm_role_assignment" "keyvault_admin" {
   count                = var.keyvault_enable_rbac_authorization ? 1 : 0
   scope                = azurerm_key_vault.main.id
   role_definition_name = "Key Vault Administrator"
-  principal_id         = data.azuread_group.admin_group.object_id
+  principal_id         = azuread_group.admin_group.object_id
 }
