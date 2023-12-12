@@ -32,7 +32,7 @@ variable "diagnostic_name" {
 variable "destination_type" {
   description = "Default is AzureDiagnostics. When set to Dedicated, logs sent to a Log Analytics workspace will go into resource specific tables."
   type        = string
-  default     = "AzureDiagnostics"
+  default     = "Skip"
   validation {
     condition     = var.destination_type == "AzureDiagnostics" || var.destination_type == "Dedicated" || var.destination_type == "Skip"
     error_message = "Must be AzureDiagnostics or Dedicated. If Skip is used, the destination will not be set."
