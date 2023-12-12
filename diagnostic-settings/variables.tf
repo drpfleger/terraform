@@ -34,7 +34,7 @@ variable "destination_type" {
   type        = string
   default     = "AzureDiagnostics"
   validation {
-    condition     = var.destination_type == "AzureDiagnostics" || var.destination_type == "Dedicated"
-    error_message = "Must be AzureDiagnostics or Dedicated"
+    condition     = var.destination_type == "AzureDiagnostics" || var.destination_type == "Dedicated" || var.destination_type == "Skip"
+    error_message = "Must be AzureDiagnostics or Dedicated. If Skip is used, the destination will not be set."
   }
 }
