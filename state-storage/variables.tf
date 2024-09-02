@@ -44,3 +44,13 @@ variable "log_analytics_resource_group" {
   description = "Resource group of the log analytics workspace"
   type        = string
 }
+
+variable "subscription_id" {
+  description = "Subscription Id"
+  type        = string
+
+  validation {
+    condition     = can(regex("^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$", var.subscription_id))
+    error_message = "Must be a valid subscription id"
+  }
+}
