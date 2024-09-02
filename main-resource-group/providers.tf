@@ -1,10 +1,10 @@
 terraform {
   required_providers {
     azurerm = {
-      version = "~>3.74.0"
+      version = "~>4.00.0"
     }
     azuread = {
-      version = ">=2.43.0"
+      version = "~>2.53.0"
     }
   }
 }
