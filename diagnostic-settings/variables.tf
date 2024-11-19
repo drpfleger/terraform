@@ -38,3 +38,29 @@ variable "destination_type" {
     error_message = "Must be AzureDiagnostics or Dedicated. If Skip is used, the destination will not be set."
   }
 }
+
+variable "user_defined_category_groups" {
+  description = "List of user defined categories to be sent to log analytics"
+  type        = list(string)
+  default     = null
+}
+
+variable "user_defined_categories" {
+  description = "List of user defined categories to be sent to log analytics"
+  type        = list(string)
+  default     = null
+
+  validation {
+    condition = (
+      length(coalesce(var.user_defined_categories, [])) == 0 ||
+      length(coalesce(var.user_defined_category_groups, [])) == 0
+    )
+    error_message = "Only one of user_defined_categories or user_defined_category_groups can be set."
+  }
+}
+
+variable "user_defined_metrics" {
+  description = "List of user defined metrics to be sent to log analytics"
+  type        = list(string)
+  default     = null
+}
