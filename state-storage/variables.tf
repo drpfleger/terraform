@@ -33,6 +33,7 @@ variable "use_diagnostic_settings" {
 variable "log_analytics_name" {
   description = "Name of the log analytics workspace"
   type        = string
+  default     = ""
 
   validation {
     condition     = var.use_diagnostic_settings == false || (var.use_diagnostic_settings == true && var.log_analytics_name != "")
