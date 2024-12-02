@@ -12,6 +12,6 @@ resource "azurerm_storage_account" "main" {
 
 # create storage container
 resource "azurerm_storage_container" "state" {
-  name                 = local.container_name
-  storage_account_name = azurerm_storage_account.main.name
+  name               = local.container_name
+  storage_account_id = azurerm_storage_account.main.id
 }
