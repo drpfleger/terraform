@@ -33,6 +33,11 @@ variable "use_diagnostic_settings" {
 variable "log_analytics_name" {
   description = "Name of the log analytics workspace"
   type        = string
+
+  validation {
+    condition     = var.use_diagnostic_settings == false || (var.use_diagnostic_settings == true && var.log_analytics_name != "")
+    error_message = "log_analytics_name is mandatory if use_diagnostic_settings is set to true"
+  }
 }
 
 variable "log_analytics_subscription" {
