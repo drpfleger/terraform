@@ -6,6 +6,7 @@ module "monitoring_state_storage" {
   log_analytics_name           = var.log_analytics_name
   log_analytics_subscription   = var.log_analytics_subscription
   log_analytics_resource_group = var.log_analytics_resource_group
+  subscription_id              = var.subscription_id
 }
 
 # BlobService
@@ -16,4 +17,5 @@ module "monitoring_state_blob" {
   log_analytics_name           = var.log_analytics_name
   log_analytics_subscription   = var.log_analytics_subscription
   log_analytics_resource_group = var.log_analytics_resource_group
+  subscription_id              = var.subscription_id
 }
