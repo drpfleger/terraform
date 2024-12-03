@@ -1,5 +1,10 @@
 data "azurerm_monitor_diagnostic_categories" "diag" {
+  provider    = azurerm.target
   resource_id = var.target_resource_id
+}
+
+data "azurerm_subscription" "log_analytics" {
+  provider = azurerm.log_analytics
 }
 
 locals {

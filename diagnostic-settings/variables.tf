@@ -6,11 +6,7 @@ variable "target_resource_id" {
 variable "enabled" {
   description = "value to enable or disable the diagnostic settings"
   type        = bool
-}
-
-variable "log_analytics_subscription" {
-  description = "Subscription id of the log analytics workspace"
-  type        = string
+  default     = true
 }
 
 variable "log_analytics_resource_group" {

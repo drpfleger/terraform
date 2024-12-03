@@ -1,4 +1,5 @@
 resource "azurerm_monitor_diagnostic_setting" "diagnostic" {
+  provider                       = azurerm.target
   count                          = local.set_diagnostic_settings
   name                           = var.diagnostic_name
   target_resource_id             = var.target_resource_id
