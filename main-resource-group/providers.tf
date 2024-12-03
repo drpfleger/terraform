@@ -1,10 +1,10 @@
 terraform {
   required_providers {
     azurerm = {
-      version = "~>4.00.0"
+      version = ">=4.0"
     }
     azuread = {
-      version = "~>2.53.0"
+      version = ">=3.0"
     }
   }
 }
@@ -19,3 +19,8 @@ provider "azurerm" {
   subscription_id = var.subscription_id
 }
 
+provider "azurerm" {
+  alias           = "log_analytics"
+  subscription_id = var.log_analytics_subscription == "" ? var.subscription_id : var.log_analytics_subscription
+  features {}
+}

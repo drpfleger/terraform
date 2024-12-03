@@ -1,6 +1,12 @@
-# access different subscription to get log analytics workspace
-provider "azurerm" {
-  alias = "monitoring_subscription"
-  features {}
-  subscription_id = var.log_analytics_subscription
+terraform {
+  required_providers {
+    azurerm = {
+      source  = "hashicorp/azurerm"
+      version = ">=4.0"
+      configuration_aliases = [
+        azurerm.log_analytics,
+        azurerm.target
+      ]
+    }
+  }
 }
