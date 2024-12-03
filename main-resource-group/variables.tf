@@ -77,18 +77,30 @@ variable "log_analytics_name" {
 
   validation {
     condition     = var.use_diagnostic_settings == false || (var.use_diagnostic_settings == true && var.log_analytics_name != "")
-    error_message = "log_analytics_name is required if use_diagnostic_settings is true"
+    error_message = "log_analytics_name is mandatory if use_diagnostic_settings is set to true"
   }
 }
 
 variable "log_analytics_subscription" {
   description = "Subscription id of the log analytics workspace"
   type        = string
+  default     = ""
+
+  validation {
+    condition     = var.use_diagnostic_settings == false || (var.use_diagnostic_settings == true && var.log_analytics_subscription != "")
+    error_message = "log_analytics_subscription is mandatory if use_diagnostic_settings is set to true"
+  }
 }
 
 variable "log_analytics_resource_group" {
   description = "Resource group of the log analytics workspace"
   type        = string
+  default     = ""
+
+  validation {
+    condition     = var.use_diagnostic_settings == false || (var.use_diagnostic_settings == true && var.log_analytics_resource_group != "")
+    error_message = "log_analytics_resource_group is mandatory if use_diagnostic_settings is set to true"
+  }
 }
 
 variable "subscription_id" {
