@@ -6,7 +6,7 @@ module "monitoring_state_storage" {
     azurerm.log_analytics = azurerm.log_analytics
   }
 
-  source                       = "github.com/drpfleger/terraform/diagnostic-settings?ref=statestorage"
+  source                       = "github.com/drpfleger/terraform/diagnostic-settings"
   target_resource_id           = azurerm_storage_account.main.id
   log_analytics_name           = var.log_analytics_name
   log_analytics_resource_group = var.log_analytics_resource_group
@@ -21,7 +21,7 @@ module "monitoring_state_blob" {
     azurerm.log_analytics = azurerm.log_analytics
   }
 
-  source                       = "github.com/drpfleger/terraform/diagnostic-settings?ref=statestorage"
+  source                       = "github.com/drpfleger/terraform/diagnostic-settings"
   target_resource_id           = "${azurerm_storage_account.main.id}/blobServices/default/"
   log_analytics_name           = var.log_analytics_name
   log_analytics_resource_group = var.log_analytics_resource_group
