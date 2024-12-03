@@ -12,3 +12,9 @@ provider "azurerm" {
 
   subscription_id = var.subscription_id
 }
+
+provider "azurerm" {
+  alias = "log_analytics"
+  features {}
+  subscription_id = var.log_analytics_subscription
+}
