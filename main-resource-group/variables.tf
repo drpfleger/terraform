@@ -73,6 +73,12 @@ variable "keyvault_sku_name" {
 variable "log_analytics_name" {
   description = "Name of the log analytics workspace"
   type        = string
+  default     = ""
+
+  validation {
+    condition     = var.use_diagnostic_settings == false || (var.use_diagnostic_settings == true && var.log_analytics_name != "")
+    error_message = "log_analytics_name is required if use_diagnostic_settings is true"
+  }
 }
 
 variable "log_analytics_subscription" {
