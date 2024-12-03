@@ -6,7 +6,7 @@ module "monitoring_key_vault" {
     azurerm.log_analytics = azurerm.log_analytics
   }
 
-  source = "github.com/drpfleger/terraform/diagnostic-settings?ref=statestorage"
+  source = "github.com/drpfleger/terraform/diagnostic-settings"
 
   target_resource_id           = azurerm_key_vault.main.id
   log_analytics_name           = var.log_analytics_name
