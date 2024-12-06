@@ -1,9 +1,9 @@
 data "azurerm_resources" "all" {
-  resource_group_name = local.resource_group_name
+  resource_group_name = data.azurerm_resource_group.main.name
 }
 
 data "azurerm_resource_group" "main" {
-  name = local.resource_group_name
+  name = var.resource_group_name
 }
 
 locals {
