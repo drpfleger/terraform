@@ -16,6 +16,7 @@ variable "project" {
 variable "resource_types" {
   description = "A list of resource types that need to be monitored for health status"
   type        = list(string)
+  default     = null
 }
 
 variable "environment" {

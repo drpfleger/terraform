@@ -7,7 +7,7 @@ resource "azurerm_monitor_activity_log_alert" "default_health_status" {
   enabled             = var.enable_health_alert
 
   scopes = [
-    var.subscription_id
+    "/subscriptions/${var.subscription_id}"
   ]
 
   criteria {
