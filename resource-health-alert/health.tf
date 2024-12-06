@@ -1,4 +1,14 @@
+# Purpose: Create an activity log alert for resource health status
+# if no resources are there to monitor, the alert will not be created
+locals {
+  count = (
+    length(coalesce(var.resource_types, [])) +
+    length(coalesce(local.resource_types, []))
+  )
+}
+
 resource "azurerm_monitor_activity_log_alert" "default_health_status" {
+  count               = local.count == 0 ? 0 : 1
   name                = local.alert_rule_name
   resource_group_name = data.azurerm_resource_group.main.name
   location            = data.azurerm_resource_group.main.location
