@@ -23,7 +23,6 @@ resource "azurerm_monitor_activity_log_alert" "default_health_status" {
     resource_group = data.azurerm_resource_group.main.name
     resource_types = var.resource_types == null ? local.resource_types : var.resource_types
 
-
     resource_health {
       current  = ["Degraded", "Unavailable"]
       previous = ["Available"]
