@@ -24,4 +24,6 @@ resource "azurerm_monitor_activity_log_alert" "default_health_status" {
   action {
     action_group_id = var.action_group_id
   }
+
+  tags = local.required_tags
 }
