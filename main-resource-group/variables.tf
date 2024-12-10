@@ -113,15 +113,8 @@ variable "subscription_id" {
   }
 }
 
-locals {
-
-  # If a resource should be created can be defined with count property that requires an number value
-  set_diagnostic_settings = var.use_diagnostic_settings == true ? 1 : 0
-
-  # Predefined tags
-  required_tags = {
-    project     = var.project
-    environment = var.environment,
-    terraform   = "yes"
-  }
+variable "group_assignable_to_role" {
+  description = "True, when the EntraId group is assignable to a role"
+  type        = bool
+  default     = false
 }
