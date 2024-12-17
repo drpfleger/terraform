@@ -13,7 +13,7 @@ resource "azurerm_key_vault" "main" {
   name                            = local.key_vault_name
   location                        = var.location
   resource_group_name             = data.azurerm_resource_group.main.name
-  tenant_id                       = data.azurerm_client_config.main.tenant_id
+  tenant_id                       = data.azurerm_subscription.current.tenant_id
   enabled_for_template_deployment = var.keyvault_enabled_for_template_deployment
   enabled_for_disk_encryption     = var.keyvault_enabled_for_disk_encryption
   enabled_for_deployment          = var.keyvault_enabled_for_deployment
