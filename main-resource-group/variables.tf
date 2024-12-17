@@ -118,3 +118,54 @@ variable "group_assignable_to_role" {
   type        = bool
   default     = false
 }
+
+variable "create_action_group" {
+  description = "True, when the action group must be created"
+  type        = bool
+  default     = false
+
+  validation {
+    condition     = var.create_subscription_budget == false || (var.create_subscription_budget == true && var.create_action_group == true)
+    error_message = "An Action Group is mandatory if create_subscription_budget is set to true"
+  }
+}
+
+variable "create_subscription_budget" {
+  description = "True, when the budget must be created"
+  type        = bool
+  default     = false
+}
+
+variable "budget_amount" {
+  description = "The amount of the budget"
+  type        = number
+  default     = null
+
+  validation {
+    condition     = var.create_subscription_budget == false || (var.create_subscription_budget == true && var.budget_amount != null)
+    error_message = "A Budget Amount is mandatory if create_subscription_budget is set to true"
+  }
+}
+
+variable "budget_forecast_threshold" {
+  description = "The forecast threshold of the budget (percentage). Default is 80%"
+  type        = number
+  default     = 80
+}
+
+variable "budget_actual_threshold" {
+  description = "The actual threshold of the budget (percentage). Default is 100%"
+  type        = number
+  default     = 100
+}
+
+variable "budget_email_addresses" {
+  description = "Email addresses to notify when the thresholds are exceeded"
+  type        = list(string)
+  default     = null
+
+  validation {
+    condition     = var.create_subscription_budget == false || (var.create_subscription_budget == true && var.budget_email_addresses != null)
+    error_message = "Budget Email Addresses are mandatory if create_subscription_budget is set to true"
+  }
+}
