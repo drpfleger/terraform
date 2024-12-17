@@ -130,6 +130,12 @@ variable "create_action_group" {
   }
 }
 
+variable "action_group_short_name" {
+  description = "Short name of the action group"
+  type        = string
+  default     = null
+}
+
 variable "create_subscription_budget" {
   description = "True, when the budget must be created"
   type        = bool
