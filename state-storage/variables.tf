@@ -72,3 +72,9 @@ variable "subscription_id" {
     error_message = "Must be a valid subscription id"
   }
 }
+
+variable "override_storage_account_name" {
+  description = "Override the storage account name"
+  type        = string
+  default     = ""
+}
