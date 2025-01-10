@@ -1,7 +1,7 @@
 # State Storage
 # this is not part of the pipeline and have to be applied manually
 resource "azurerm_storage_account" "main" {
-  name                     = local.storage_account_name
+  name                     = var.override_storage_account_name != "" ? var.override_storage_account_name : local.storage_account_name
   is_hns_enabled           = false
   account_kind             = "StorageV2"
   resource_group_name      = var.resource_group_name

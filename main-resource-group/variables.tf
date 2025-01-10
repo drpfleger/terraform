@@ -118,3 +118,9 @@ variable "group_assignable_to_role" {
   type        = bool
   default     = false
 }
+
+variable "override_keyvault_name" {
+  description = "Override the key vault name"
+  type        = string
+  default     = ""
+}
