@@ -4,13 +4,13 @@ This module defines a service application in Azure Entra Directory using Terrafo
 
 ## Required Variables
 
-The following variables must be set for the module to work:
+The following variables must be set for the module to work. If the app has no concrete relation to any working project, use a default identity subscription with existing key vault. In our case for example: `subscription_id = "<identity-sub-id>"`, `project = "escorial-id"` and `environment = "main"`.
 
 - `subscription_id`: The subscription ID where the project resource group and key vault are located.
 - `project`: The project name this app belongs to.
-- `environment`: The deployment environment or stage (e.g., dev, sbx, tst, prd, main).
-- `app_type`: The type of the app. This is used to build the display name with schema `project-app_type-env`.
-- `description`: A descriptive text for the purpose of this app.
+- `environment`: The deployment environment or stage (i.e., dev, sbx, tst, prd, main).
+- `app_type`: The type of the app. This is used to build the display name with schema `project-app_type-environment`.
+- `description`: A descriptive text regarding the purpose of this app.
 - `is_confidential_client`: Whether this client app is confidential.
 - `use_password`/`use_certificate`: If `is_confidential_client` either `use_password` or `use_certificate` must be true, else set both to false.
 
@@ -20,7 +20,7 @@ The following variables must be set for the module to work:
 module "sample_app" {
   source = "github.com/drpfleger/terraform/service-app"
 
-  subscription_id        = "project-subscription-id"
+  subscription_id        = "<project-subscription-id>"
   project                = "escorial-id"
   environment            = "main"
   app_type               = "sample-app"
@@ -34,7 +34,9 @@ module "sample_app" {
 
 The following variables are optional and have default values: Depending on which kind of app you want to define several different options can be set.
 
-- If this app needs to access other APIs (e.g. Graph API) have a look at the `api_access` variable.
+#### Quick Reference:
+
+- If this app requires access to other APIs (e.g. calls to Graph API) have a look at the `api_access` variable.
 - If this apps service principal should be assigned an Azure RBAC role have a look at the `rbac_assignments` variable
 - To expose scopes and/or roles of for example an API application refer to the `oauth2_scopes` and `app_roles`
 - In rare cases it may be required to include optional claims in the tokens issued for this app. To achieve this, configure the `define_optional_claims` and related variables.
@@ -77,6 +79,7 @@ module "sample_app" {
   description            = "This is a sample service app"
   is_confidential_client = true
   use_password           = true
+  use_certificate        = false
 
   password_rotation_days    = 90
   enabled_for_sign_in       = true
@@ -89,35 +92,57 @@ module "sample_app" {
   
   homepage_url  = "https://example.com"
   logout_url    = "https://example.com/logout"
+  # e.g. define two scopes, one user one admin
   oauth2_scopes = {
-    "scope1" = {
-      admin_consent_description  = "Admin consent description"
-      admin_consent_display_name = "Admin consent display name"
+    "full" = {
+      admin_consent_description  = "Allow the application full access to the API on behalf of the signed-in user."
+      admin_consent_display_name = "Full access"
       scope_type                 = "User"
-      scope_value                = "scope1"
-      user_consent_description   = "User consent description"
-      user_consent_display_name  = "User consent display name"
+      scope_value                = "full"
+      user_consent_description   = "Access all Methods of the API on your behalf"
+      user_consent_display_name  = "Full access"
+    }
+    "admin" = {
+      admin_consent_description  = "Allow the application admin access to the API on behalf of the signed-in user."
+      admin_consent_display_name = "Admin access"
+      scope_type                 = "Admin"
+      scope_value                = "admin"
+      user_consent_description   = "Access admin Methods of the API on your behalf"
+      user_consent_display_name  = "Admin access"
     }
   }
   app_roles = {
-    "role1" = {
+    "userRole" = {
       allowed_member_types = ["User"]
-      display_name         = "Role 1"
-      description          = "Role 1 description"
-      value                = "role1"
+      display_name         = "Sample User Role"
+      description          = "Default Sample Role for Users"
+      value                = "sampleUserRole"
     }
   }
+
+  # Example: Give this app permissions to access Graph API with scope/role.
+  # Assign (user delegated) scope User.Read and (application) role User.Read.All
+  # use api_roles for application permissions and api_scopes for delegated permissions
+  # e.g. for Graph API permissions can be looked up here:
+  # use the scope/role name to look up the id automatically
+  # https://learn.microsoft.com/en-us/graph/permissions-reference
   api_access = {
-    "api1" = {
-      api_client_id = "api-client-id"
-      api_roles     = ["role1"]
-      api_scopes    = ["scope1"]
+    graph = {
+      api_client_id = "00000003-0000-0000-c000-000000000000"
+      api_roles     = ["User.Read.All"]
+      api_scopes    = ["User.Read"]
     }
   }
+
+  # You can assign RBAC roles to the SP associated with this application.
+  # Scope_id needs to be the resource id for which this Role is assigned
+  # Role is the display name of the Role as seen in Azure portal
+  # To use IDs as scope from a different module defined in the same main.tf file
+  # it makes sense to output the id from the other module and pass it here. 
   rbac_assignments = {
     "assignment1" = {
-      scope_id             = "scope-id"
-      role_definition_name = "role-definition-name"
+      scope_id             = module.<module_name>.<output_name>
+      role_definition_name = "<role-definition-name>"
     }
   }
 }
