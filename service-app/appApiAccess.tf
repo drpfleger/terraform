@@ -1,6 +1,8 @@
 # "API permissions" in Azure portal
 # API acess for itself
 resource "azuread_application_api_access" "self" {
+  count = length(local.application_roles) > 0 || length(local.app_scopes) > 0 ? 1 : 0
+
   application_id = azuread_application.main.id
   api_client_id  = azuread_application.main.client_id
   # permit api access for all own scopes/roles
