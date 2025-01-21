@@ -6,10 +6,10 @@ data "azuread_service_principal" "apis" {
   client_id = each.value.api_client_id
 }
 
-# read key vault of this project + stage
+# read the given key vault to store secrets
 data "azurerm_key_vault" "main" {
-  name                = local.kvt_name
-  resource_group_name = local.rg_name
+  name                = var.kvt_name
+  resource_group_name = var.rg_name
 }
 
 # read this projects admin group name
