@@ -9,6 +9,8 @@ resource "azuread_application_password" "main" {
   rotate_when_changed = {
     rotation = time_rotating.main[count.index].id
   }
+
+  depends_on = [azurerm_key_vault_secret.main]
 }
 
 # After n days a tf apply will attempt to rotate the application_password. Default is 180 days.
@@ -30,7 +32,13 @@ resource "azuread_application_certificate" "main" {
   count = (var.is_confidential_client && var.use_certificate) ? 1 : 0
 
   application_id = azuread_application.main.id
-  value          = azurerm_key_vault_certificate.main[count.index].certificate_data_base64
+  value          = azurerm_key_vault_certificate.main[count.index].certificate_data
+  end_date       = azurerm_key_vault_certificate.main[count.index].certificate_attributes[0].expires
+  start_date     = azurerm_key_vault_certificate.main[count.index].certificate_attributes[0].not_before
+  type           = "AsymmetricX509Cert"
+  encoding       = "hex"
+
+  depends_on = [azurerm_key_vault_certificate.main]
 }
 
 # Generate new certificate if required
@@ -63,7 +71,7 @@ resource "azurerm_key_vault_certificate" "main" {
     }
 
     secret_properties {
-      content_type = "application/x-pem-file"
+      content_type = "application/x-pkcs12"
     }
 
     x509_certificate_properties {
