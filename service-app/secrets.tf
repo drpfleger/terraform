@@ -33,8 +33,8 @@ resource "azuread_application_certificate" "main" {
 
   application_id = azuread_application.main.id
   value          = azurerm_key_vault_certificate.main[count.index].certificate_data
-  end_date       = azurerm_key_vault_certificate.main[count.index].certificate_attributes[0].expires
-  start_date     = azurerm_key_vault_certificate.main[count.index].certificate_attributes[0].not_before
+  end_date       = azurerm_key_vault_certificate.main[count.index].certificate_attribute[0].expires
+  start_date     = azurerm_key_vault_certificate.main[count.index].certificate_attribute[0].not_before
   type           = "AsymmetricX509Cert"
   encoding       = "hex"
 
