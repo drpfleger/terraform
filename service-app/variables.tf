@@ -50,15 +50,15 @@ variable "use_password" {
 
 # Optional variables
 variable "kvt_name" {
-  description = "The name of the key vault where the secrets are stored. If different from naming convention, the key vault must exist."
+  description = "The name of the key vault where the secrets are stored. Set if different from naming convention, the key vault must exist."
   type        = string
-  default     = "kvt-${var.project}-${var.environment}"
+  default     = "default"
 }
 
 variable "rg_name" {
-  description = "The name of the resource group where the key vault is located. If different from naming convention, the resource group must exist."
+  description = "The name of the resource group where the key vault is located. Set if different from naming convention, the resource group must exist."
   type        = string
-  default     = "rg-${var.project}-${var.environment}"
+  default     = "default"
 }
 
 variable "password_roatation_days" {
