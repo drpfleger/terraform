@@ -9,8 +9,6 @@ resource "azuread_application_password" "main" {
   rotate_when_changed = {
     rotation = time_rotating.main[count.index].id
   }
-
-  depends_on = [azurerm_key_vault_secret.main]
 }
 
 # After n days a tf apply will attempt to rotate the application_password. Default is 180 days.
@@ -25,6 +23,8 @@ resource "azurerm_key_vault_secret" "main" {
   name         = local.app_secret_name
   key_vault_id = data.azurerm_key_vault.main.id
   value        = azuread_application_password.main[count.index].value
+
+  depends_on = [azuread_application_password.main]
 }
 
 # Necessary Setup for certificate secret
