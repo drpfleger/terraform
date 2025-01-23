@@ -52,13 +52,13 @@ variable "use_password" {
 variable "kvt_name" {
   description = "The name of the key vault where the secrets are stored. Set if different from naming convention, the key vault must exist."
   type        = string
-  default     = "default"
+  default     = null
 }
 
 variable "rg_name" {
   description = "The name of the resource group where the key vault is located. Set if different from naming convention, the resource group must exist."
   type        = string
-  default     = "default"
+  default     = null
 }
 
 variable "password_roatation_days" {
