@@ -4,9 +4,8 @@ This module defines a service application in Azure Entra Directory using Terrafo
 
 ## Required Variables
 
-The following variables must be set for the module to work. If the app has no concrete relation to any working project, use a default identity subscription with existing key vault. In our case for example: `subscription_id = "<identity-sub-id>"`, `project = "escorial-id"` and `environment = "main"`.
+The following variables must be set for the module to work. If the app has no concrete relation to any working project, use the default identity subscription with existing key vault. In our case for example: `project = "escorial-id"` and `environment = "main"`. If the subscription where the key vault lies is different from the subscription configured in the provider of your root module, please also define another provider with alias in your root module, set the subscription_id and pass it as this providers module (see example below).
 
-- `subscription_id`: The subscription ID where the project resource group and key vault are located.
 - `project`: The project name this app belongs to.
 - `environment`: The deployment environment or stage (i.e., dev, sbx, tst, prd, main).
 - `app_type`: The type of the app. This is used to build the display name with schema `project-app_type-environment`.
@@ -18,15 +17,19 @@ The following variables must be set for the module to work. If the app has no co
 
 ```hcl
 module "sample_app" {
+  provider = {
+    # define provider in root module and pass here
+    azurerm = azurerm.service_app
+  }
   source = "github.com/drpfleger/terraform/service-app"
 
-  subscription_id        = "<project-subscription-id>"
   project                = "escorial-id"
   environment            = "main"
   app_type               = "sample-app"
   description            = "This is a sample service app"
   is_confidential_client = true
   use_password           = true
+  use_certificate        = false
 }
 ```
 
@@ -43,6 +46,8 @@ The following variables are optional and have default values: Depending on which
 
 The **full list of optional variables** can be found below. Please note that most of these variables are complex types. Refer to the `variables.tf` files of this module to review their structure.
 
+- `kvt_name`: The Name of the keyvault where the password/certificate should be stored. Only set when name differs from naming convention `"kvt-{project}-{environment}"`.
+- `rg_name`: The Name of the resource group where the keyvault is located. Only set when name differs from naming convention `"rg-{project}-{environment}"`.
 - `password_roatation_days`: Days after which a tf apply will auto-rotate the password. Default is `180`.
 - `enabled_for_sign_in`: Whether the service principal is enabled for sign-in. Default is `true`.
 - `assignement_required`: Whether an assignment of User/Group is required to use the app. Default is `true`.

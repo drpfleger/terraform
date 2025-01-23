@@ -1,9 +1,4 @@
 # Required variables
-variable "subscription_id" {
-  description = "The subscription ID where the project rg and kvt are located."
-  type        = string
-}
-
 variable "project" {
   description = "The project name this app belongs to."
   type        = string
@@ -35,14 +30,6 @@ variable "is_confidential_client" {
 
   validation {
     condition = (
-      !var.is_confidential_client ||
-      (var.use_certificate && !var.use_password) ||
-      (!var.use_certificate && var.use_password)
-    )
-    error_message = "If 'is_confidential_client' is true, only one of 'use_certificate' or 'use_password' can be true."
-  }
-  validation {
-    condition = (
       var.is_confidential_client ||
       (!var.use_certificate && !var.use_password)
     )
@@ -60,7 +47,20 @@ variable "use_password" {
   type        = bool
 }
 
+
 # Optional variables
+variable "kvt_name" {
+  description = "The name of the key vault where the secrets are stored. Set if different from naming convention, the key vault must exist."
+  type        = string
+  default     = null
+}
+
+variable "rg_name" {
+  description = "The name of the resource group where the key vault is located. Set if different from naming convention, the resource group must exist."
+  type        = string
+  default     = null
+}
+
 variable "password_roatation_days" {
   description = "Days after which a tf apply will autorotate the password."
   type        = number
