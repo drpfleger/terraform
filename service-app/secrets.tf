@@ -37,7 +37,7 @@ resource "azuread_application_certificate" "main" {
 resource "azurerm_key_vault_certificate" "main" {
   count = (var.is_confidential_client && var.use_certificate) ? 1 : 0
 
-  name         = local.app_secret_name
+  name         = local.app_cert_name
   key_vault_id = data.azurerm_key_vault.main.id
 
   certificate_policy {
