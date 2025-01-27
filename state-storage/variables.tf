@@ -90,3 +90,9 @@ variable "delete_retention_container_in_days" {
   type        = number
   default     = 0
 }
+
+variable "allow_blob_anonymous_access" {
+  description = "Allow anonymous access to the blob"
+  type        = bool
+  default     = false
+}
