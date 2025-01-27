@@ -8,6 +8,22 @@ resource "azurerm_storage_account" "main" {
   location                 = var.location
   account_tier             = "Standard"
   account_replication_type = "LRS"
+
+  blob_properties {
+    dynamic "delete_retention_policy" {
+      for_each = var.delete_retention_blob_in_days > 0 ? [1] : []
+      content {
+        days = var.delete_retention_blob_in_days
+      }
+    }
+
+    dynamic "container_delete_retention_policy" {
+      for_each = var.delete_retention_container_in_days > 0 ? [1] : []
+      content {
+        days = var.delete_retention_blob_in_days
+      }
+    }
+  }
 }
 
 # create storage container

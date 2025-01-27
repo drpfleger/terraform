@@ -78,3 +78,15 @@ variable "override_storage_account_name" {
   type        = string
   default     = ""
 }
+
+variable "delete_retention_blob_in_days" {
+  description = "Number of days to retain the blob"
+  type        = number
+  default     = 0
+}
+
+variable "delete_retention_container_in_days" {
+  description = "Number of days to retain the container"
+  type        = number
+  default     = 0
+}
