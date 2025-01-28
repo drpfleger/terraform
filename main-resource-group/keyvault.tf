@@ -10,7 +10,7 @@
 
 # Key vault
 resource "azurerm_key_vault" "main" {
-  name                            = var.override_keyvault_name != "" ? var.override_keyvault_name : local.key_vault_name
+  name                            = var.override_keyvault_name != null ? var.override_keyvault_name : local.key_vault_name
   location                        = var.location
   resource_group_name             = data.azurerm_resource_group.main.name
   tenant_id                       = data.azurerm_client_config.main.tenant_id
