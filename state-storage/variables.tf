@@ -33,10 +33,10 @@ variable "use_diagnostic_settings" {
 variable "log_analytics_name" {
   description = "Name of the log analytics workspace"
   type        = string
-  default     = ""
+  default     = null
 
   validation {
-    condition     = var.use_diagnostic_settings == false || (var.use_diagnostic_settings == true && var.log_analytics_name != "")
+    condition     = var.use_diagnostic_settings == false || (var.use_diagnostic_settings == true && var.log_analytics_name != null)
     error_message = "log_analytics_name is mandatory if use_diagnostic_settings is set to true"
   }
 }
@@ -44,10 +44,10 @@ variable "log_analytics_name" {
 variable "log_analytics_subscription" {
   description = "Subscription id of the log analytics workspace"
   type        = string
-  default     = ""
+  default     = null
 
   validation {
-    condition     = var.use_diagnostic_settings == false || (var.use_diagnostic_settings == true && var.log_analytics_subscription != "")
+    condition     = var.use_diagnostic_settings == false || (var.use_diagnostic_settings == true && var.log_analytics_subscription != null)
     error_message = "log_analytics_subscription is mandatory if use_diagnostic_settings is set to true"
   }
 }
@@ -55,10 +55,10 @@ variable "log_analytics_subscription" {
 variable "log_analytics_resource_group" {
   description = "Resource group of the log analytics workspace"
   type        = string
-  default     = ""
+  default     = null
 
   validation {
-    condition     = var.use_diagnostic_settings == false || (var.use_diagnostic_settings == true && var.log_analytics_resource_group != "")
+    condition     = var.use_diagnostic_settings == false || (var.use_diagnostic_settings == true && var.log_analytics_resource_group != null)
     error_message = "log_analytics_resource_group is mandatory if use_diagnostic_settings is set to true"
   }
 }
@@ -76,19 +76,19 @@ variable "subscription_id" {
 variable "override_storage_account_name" {
   description = "Override the storage account name"
   type        = string
-  default     = ""
+  default     = null
 }
 
 variable "delete_retention_blob_in_days" {
   description = "Number of days to retain the blob"
   type        = number
-  default     = 0
+  default     = null
 }
 
 variable "delete_retention_container_in_days" {
   description = "Number of days to retain the container"
   type        = number
-  default     = 0
+  default     = null
 }
 
 variable "allow_blob_anonymous_access" {

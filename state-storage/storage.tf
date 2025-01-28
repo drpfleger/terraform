@@ -1,7 +1,7 @@
 # State Storage
 # this is not part of the pipeline and have to be applied manually
 resource "azurerm_storage_account" "main" {
-  name                            = var.override_storage_account_name != "" ? var.override_storage_account_name : local.storage_account_name
+  name                            = var.override_storage_account_name != null ? var.override_storage_account_name : local.storage_account_name
   is_hns_enabled                  = false
   account_kind                    = "StorageV2"
   resource_group_name             = var.resource_group_name
@@ -13,14 +13,14 @@ resource "azurerm_storage_account" "main" {
 
   blob_properties {
     dynamic "delete_retention_policy" {
-      for_each = var.delete_retention_blob_in_days > 0 ? [1] : []
+      for_each = var.delete_retention_blob_in_days != null ? [1] : []
       content {
         days = var.delete_retention_blob_in_days
       }
     }
 
     dynamic "container_delete_retention_policy" {
-      for_each = var.delete_retention_container_in_days > 0 ? [1] : []
+      for_each = var.delete_retention_container_in_days != null ? [1] : []
       content {
         days = var.delete_retention_blob_in_days
       }
