@@ -5,5 +5,5 @@ resource "azurerm_role_assignment" "main" {
 
   scope                = each.value.scope_id
   role_definition_name = each.value.role_definition_name
-  principal_id         = azuread_service_principal.main.id
+  principal_id         = azuread_service_principal.main.object_id
 }
