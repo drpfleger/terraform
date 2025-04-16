@@ -47,18 +47,18 @@ variable "use_password" {
   type        = bool
 }
 
-
 # Optional variables
-variable "kvt_name" {
-  description = "The name of the key vault where the secrets are stored. Set if different from naming convention, the key vault must exist."
+variable "key_vault_id" {
+  description = "The Resource ID of the key vault where the secrets should be stored. Required when is_confidential_client is true."
   type        = string
   default     = null
-}
 
-variable "rg_name" {
-  description = "The name of the resource group where the key vault is located. Set if different from naming convention, the resource group must exist."
-  type        = string
-  default     = null
+  validation {
+    condition = (
+      !var.is_confidential_client || var.key_vault_id != null
+    )
+    error_message = "If 'is_confidential_client' is true, key_vault_id cannot be null."
+  }
 }
 
 variable "password_roatation_days" {

@@ -30,6 +30,7 @@ module "sample_app" {
   is_confidential_client = true
   use_password           = true
   use_certificate        = false
+  key_vault_id           = <kvt-resource-id>
 }
 ```
 
@@ -46,8 +47,7 @@ The following variables are optional and have default values: Depending on which
 
 The **full list of optional variables** can be found below. Please note that most of these variables are complex types. Refer to the `variables.tf` files of this module to review their structure.
 
-- `kvt_name`: The Name of the keyvault where the password/certificate should be stored. Only set when name differs from naming convention `"kvt-{project}-{environment}"`.
-- `rg_name`: The Name of the resource group where the keyvault is located. Only set when name differs from naming convention `"rg-{project}-{environment}"`.
+- `key_vault_id`: The Resource ID of the keyvault where Secrets should be written to. Required if `is_confidential_client` is `true`.
 - `password_roatation_days`: Days after which a tf apply will auto-rotate the password. Default is `180`.
 - `enabled_for_sign_in`: Whether the service principal is enabled for sign-in. Default is `true`.
 - `assignement_required`: Whether an assignment of User/Group is required to use the app. Default is `true`.

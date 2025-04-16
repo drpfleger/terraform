@@ -21,7 +21,7 @@ resource "time_rotating" "main" {
 resource "azurerm_key_vault_secret" "main" {
   count        = (var.is_confidential_client && var.use_password) ? 1 : 0
   name         = local.app_secret_name
-  key_vault_id = data.azurerm_key_vault.main.id
+  key_vault_id = var.key_vault_id
   value        = azuread_application_password.main[count.index].value
 
   depends_on = [azuread_application_password.main]
@@ -46,7 +46,7 @@ resource "azurerm_key_vault_certificate" "main" {
   count = (var.is_confidential_client && var.use_certificate) ? 1 : 0
 
   name         = local.app_cert_name
-  key_vault_id = data.azurerm_key_vault.main.id
+  key_vault_id = var.key_vault_id
 
   certificate_policy {
     issuer_parameters {
