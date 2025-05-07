@@ -22,3 +22,9 @@ output "service_principal_id" {
   value       = azuread_service_principal.main.id
   description = "The ID of the Entra Id service principal."
 }
+
+output "service_principal_object_id" {
+  value       = azuread_service_principal.main.object_id
+  description = "The object ID of the Entra Id service principal."
+
+}
