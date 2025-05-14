@@ -58,7 +58,7 @@ provider "azurerm" {
 
 ```hcl
 module "diag_storage" {
-    source = "../diagnostic-settings"
+    source                       = "github.com/drpfleger/terraform/diagnostic-settings"
 
     providers = {
         azurerm.target        = azurerm,
@@ -76,7 +76,7 @@ module "diag_storage" {
 
 ```hcl
 module "diag_container_blob" {
-    source = "../diagnostic-settings"
+    source                    = "github.com/drpfleger/terraform/diagnostic-settings"
 
     providers = {
         azurerm.target        = azurerm,
@@ -97,7 +97,7 @@ module "diag_container_blob" {
 
 ```hcl
 module "diag_container_queue" {
-    source = "../diagnostic-settings"
+    source                    = "github.com/drpfleger/terraform/diagnostic-settings"
 
     providers = {
         azurerm.target        = azurerm,
