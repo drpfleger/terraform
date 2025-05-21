@@ -188,6 +188,12 @@ variable "rbac_assignments" {
   default = {}
 }
 
+variable "grant_own_api_access" {
+  description = "Specify whether this App should be granted API permissions for its own scopes and roles."
+  type        = bool
+  default     = false
+}
+
 # The following optional claims are rarely used.
 variable "define_optional_claims" {
   description = "Whether to use optional claims."

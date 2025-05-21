@@ -66,6 +66,7 @@ The **full list of optional variables** can be found below. Please note that mos
 - `app_roles`: The App roles defined by the API. Default is an empty map.
 - `api_access`: Define which APIs this app needs to access with which scopes and/or roles. Default is an empty map.
 - `rbac_assignments`: Map of Azure Resources to Role assignments for this Service Principal. Default is an empty map.
+- `grant_own_api_access`: Specify whether this App should be granted API permissions for its own scopes and roles. Default is false.
 - `define_optional_claims`: Whether to use optional claims. Default is `false`.
 - `access_token_claims`: The optional claims to include in the access token. Default is an empty map.
 - `id_token_claims`: The optional claims to include in the id token. Default is an empty map.
