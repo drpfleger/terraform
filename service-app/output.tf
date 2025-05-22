@@ -30,5 +30,10 @@ output "service_principal_object_id" {
 
 output "app_role_ids" {
   value       = azuread_service_principal.main.app_role_ids
-  description = "The mapping of app role values to IDs of the service principal. Useful for getting role ID by name lookup."
+  description = "The mapping of app role values to IDs of this service principal. Useful for getting role ID by name lookup."
+}
+
+output "app_scope_ids" {
+  value       = azuread_service_principal.main.oauth2_permission_scope_ids
+  description = "The mapping of scope values to IDs of this service principal. Useful for getting scope ID by name lookup."
 }
