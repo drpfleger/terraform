@@ -26,5 +26,9 @@ output "service_principal_id" {
 output "service_principal_object_id" {
   value       = azuread_service_principal.main.object_id
   description = "The object ID of the Entra Id service principal."
+}
 
+output "app_role_ids" {
+  value       = azuread_service_principal.main.app_role_ids
+  description = "The mapping of app role values to IDs of the service principal. Useful for getting role ID by name lookup."
 }
