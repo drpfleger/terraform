@@ -119,6 +119,12 @@ variable "group_assignable_to_role" {
   default     = false
 }
 
+variable "admin_group_role" {
+  description = "The role name that should be assigned to the created admin group on subscription level"
+  type        = string
+  default     = "Owner"
+}
+
 variable "override_keyvault_name" {
   description = "Override the key vault name"
   type        = string
