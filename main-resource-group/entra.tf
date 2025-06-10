@@ -6,7 +6,7 @@ resource "azuread_group" "admin_group" {
 }
 
 # Assign the created project admin group a role on the subscription level
-resource "azurerm_role_assignment" "admin_group_subscription_owner" {
+resource "azurerm_role_assignment" "admin_group_subscription_role" {
   scope                = "subscriptions/${data.azurerm_client_config.main.subscription_id}"
   role_definition_name = var.admin_group_role
   principal_id         = azuread_group.admin_group.object_id
