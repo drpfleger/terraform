@@ -194,6 +194,17 @@ variable "grant_own_api_access" {
   default     = false
 }
 
+variable "group_object_id" {
+  description = "The object ID of the group to assign the Owner role to. If provided, rbac_assignments must be empty."
+  type        = string
+  default     = null
+
+  validation {
+    condition     = var.group_object_id == null || length(var.rbac_assignments) == 0
+    error_message = "If 'group_object_id' is provided, 'rbac_assignments' must be empty."
+  }
+}
+
 # The following optional claims are rarely used.
 variable "define_optional_claims" {
   description = "Whether to use optional claims."
