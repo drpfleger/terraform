@@ -24,7 +24,6 @@ resource "azurerm_monitor_diagnostic_setting" "diagnostic" {
     for_each = local.metrics == null ? [] : local.metrics
     content {
       category = enabled_metric.value
-      enabled  = true
     }
   }
 }
