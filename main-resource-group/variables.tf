@@ -130,3 +130,61 @@ variable "override_keyvault_name" {
   type        = string
   default     = null
 }
+
+# Budget and Action Group variables
+variable "enable_budget" {
+  description = "Enable budget monitoring for the subscription"
+  type        = bool
+  default     = false
+}
+
+variable "budget_amount" {
+  description = "The budget amount in currency units. Required if enable_budget is true"
+  type        = number
+  default     = null
+
+  validation {
+    condition     = var.enable_budget == false || (var.enable_budget == true && var.budget_amount != null && var.budget_amount > 0)
+    error_message = "budget_amount must be a positive number when enable_budget is true"
+  }
+}
+
+variable "budget_forecast_threshold" {
+  description = "The budget forecast threshold percentage that triggers a notification"
+  type        = number
+  default     = 80
+
+  validation {
+    condition     = var.budget_forecast_threshold > 0 && var.budget_forecast_threshold <= 100
+    error_message = "budget_forecast_threshold must be between 1 and 100"
+  }
+}
+
+variable "budget_actual_threshold" {
+  description = "The budget actual threshold percentage that triggers a notification"
+  type        = number
+  default     = 100
+
+  validation {
+    condition     = var.budget_actual_threshold > 0 && var.budget_actual_threshold <= 100
+    error_message = "budget_actual_threshold must be between 1 and 100"
+  }
+}
+
+variable "alert_email_receivers" {
+  description = "List of email addresses to receive budget alerts. Required if enable_budget is true"
+  type        = list(string)
+  default     = []
+
+  validation {
+    condition     = var.enable_budget == false || (var.enable_budget == true && length(var.alert_email_receivers) > 0)
+    error_message = "alert_email_receivers must contain at least one email address when enable_budget is true"
+  }
+
+  validation {
+    condition = alltrue([
+      for email in var.alert_email_receivers : can(regex("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$", email))
+    ])
+    error_message = "All email addresses in alert_email_receivers must be valid email addresses"
+  }
+}
