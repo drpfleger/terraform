@@ -188,3 +188,14 @@ variable "alert_email_receivers" {
     error_message = "All email addresses in alert_email_receivers must be valid email addresses"
   }
 }
+
+variable "action_group_short_name_override" {
+  description = "Override the action group short name (max 12 characters). If not provided, uses project name truncated to 12 chars"
+  type        = string
+  default     = null
+
+  validation {
+    condition     = var.action_group_short_name_override == null || length(var.action_group_short_name_override) <= 12
+    error_message = "action_group_short_name_override must be 12 characters or less"
+  }
+}

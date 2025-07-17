@@ -1,21 +1,3 @@
-# Action Group for budget alerts
-resource "azurerm_monitor_action_group" "budget_alerts" {
-  count               = var.enable_budget ? 1 : 0
-  name                = local.action_group_name
-  resource_group_name = data.azurerm_resource_group.main.name
-  short_name          = "budget"
-
-  dynamic "email_receiver" {
-    for_each = var.alert_email_receivers
-    content {
-      name          = "email-${email_receiver.key}"
-      email_address = email_receiver.value
-    }
-  }
-
-  tags = local.required_tags
-}
-
 # Subscription Budget
 resource "azurerm_consumption_budget_subscription" "main" {
   count           = var.enable_budget ? 1 : 0
@@ -26,7 +8,7 @@ resource "azurerm_consumption_budget_subscription" "main" {
   time_grain = "Monthly"
 
   time_period {
-    start_date = formatdate("YYYY-MM-01'T'00:00:00'Z'", timestamp())
+    start_date = formatdate("YYYY-MM-01'T'00:00:00'Z'", timeadd(timestamp(), "24h"))
   }
 
   notification {
@@ -35,7 +17,7 @@ resource "azurerm_consumption_budget_subscription" "main" {
     operator  = "GreaterThan"
 
     contact_groups = [
-      azurerm_monitor_action_group.budget_alerts[0].id
+      azurerm_monitor_action_group.main[0].id
     ]
 
     threshold_type = "Forecasted"
@@ -47,7 +29,7 @@ resource "azurerm_consumption_budget_subscription" "main" {
     operator  = "GreaterThan"
 
     contact_groups = [
-      azurerm_monitor_action_group.budget_alerts[0].id
+      azurerm_monitor_action_group.main[0].id
     ]
 
     threshold_type = "Actual"
