@@ -94,7 +94,6 @@ module "main_resource_group" {
 |------|------|
 | azurerm_resource_group | data source |
 | azurerm_subscription | data source |
-| azurerm_client_config | data source |
 | azurerm_key_vault | resource |
 | azurerm_role_assignment | resource |
 | azurerm_network_watcher | resource |

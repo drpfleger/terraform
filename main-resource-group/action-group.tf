@@ -7,7 +7,7 @@ resource "azurerm_monitor_action_group" "main" {
   dynamic "email_receiver" {
     for_each = var.enable_budget ? var.alert_email_receivers : []
     content {
-      name          = "email-${email_receiver.key}"
+      name          = email_receiver.value
       email_address = email_receiver.value
     }
   }
