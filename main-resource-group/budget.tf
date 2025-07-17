@@ -17,7 +17,7 @@ resource "azurerm_consumption_budget_subscription" "main" {
     operator  = "GreaterThan"
 
     contact_groups = [
-      azurerm_monitor_action_group.main[0].id
+      azurerm_monitor_action_group.main.id
     ]
 
     threshold_type = "Forecasted"
@@ -29,7 +29,7 @@ resource "azurerm_consumption_budget_subscription" "main" {
     operator  = "GreaterThan"
 
     contact_groups = [
-      azurerm_monitor_action_group.main[0].id
+      azurerm_monitor_action_group.main.id
     ]
 
     threshold_type = "Actual"

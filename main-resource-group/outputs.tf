@@ -55,12 +55,12 @@ output "admin_group_name" {
 # Budget and Action Group outputs (conditional)
 output "action_group_id" {
   description = "ID of the budget action group (if enabled)"
-  value       = var.enable_budget ? azurerm_monitor_action_group.main[0].id : null
+  value       = var.enable_budget ? azurerm_monitor_action_group.main.id : null
 }
 
 output "action_group_name" {
   description = "Name of the budget action group (if enabled)"
-  value       = var.enable_budget ? azurerm_monitor_action_group.main[0].name : null
+  value       = var.enable_budget ? azurerm_monitor_action_group.main.name : null
 }
 
 output "budget_id" {
