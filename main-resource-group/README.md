@@ -124,14 +124,14 @@ module "main_resource_group" {
 | Name | Version |
 |------|---------|
 | terraform | >= 1.0 |
-| azurerm | >= 4.0 |
+| azurerm | >= 4.31.0 |
 | azuread | >= 3.0 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| azurerm | >= 4.0 |
+| azurerm | >= 4.31.0 |
 | azuread | >= 3.0 |
 
 ## Resources
