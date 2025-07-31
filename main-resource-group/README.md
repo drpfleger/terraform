@@ -6,6 +6,7 @@ This Terraform module creates and manages a main resource group with associated 
 - Network Watcher
 - Optional subscription budget monitoring
 - Optional action group for budget alerts
+- Optional resource health alerts
 
 ## Features
 
@@ -14,6 +15,7 @@ This Terraform module creates and manages a main resource group with associated 
 - **Admin Group**: Creates an Azure AD group with subscription-level permissions
 - **Network Watcher**: Sets up network monitoring capabilities
 - **Budget Monitoring**: Optional subscription-level budget with email notifications
+- **Resource Health Alerts**: Optional monitoring of resource health status changes
 - **Diagnostic Settings**: Optional integration with Log Analytics workspace
 
 ## Usage
@@ -73,6 +75,50 @@ module "main_resource_group" {
 }
 ```
 
+### With Resource Health Alerts
+
+```hcl
+module "main_resource_group" {
+  source = "github.com/drpfleger/terraform/main-resource-group"
+
+  main_resource_group_name = "rg-myproject-dev"
+  location                 = "westeurope"
+  project                  = "myproject"
+  environment              = "dev"
+  subscription_id          = "12345678-1234-1234-1234-123456789012"
+
+  # Resource health monitoring
+  enable_resource_health_alert = true
+  health_alert_email_receivers = ["admin@company.com", "ops@company.com"]
+  health_alert_resource_types  = ["Microsoft.Compute/virtualMachines", "Microsoft.Storage/storageAccounts"]
+}
+```
+
+### With Both Budget and Health Alerts
+
+```hcl
+module "main_resource_group" {
+  source = "github.com/drpfleger/terraform/main-resource-group"
+
+  main_resource_group_name = "rg-myproject-dev"
+  location                 = "westeurope"
+  project                  = "myproject"
+  environment              = "dev"
+  subscription_id          = "12345678-1234-1234-1234-123456789012"
+
+  # Budget configuration
+  enable_budget              = true
+  budget_amount              = 1000
+  budget_forecast_threshold  = 80
+  budget_actual_threshold    = 100
+  alert_email_receivers      = ["admin@company.com", "finance@company.com"]
+
+  # Resource health monitoring (uses same action group as budget)
+  enable_resource_health_alert = true
+  health_alert_resource_types  = ["Microsoft.Compute/virtualMachines"]
+}
+```
+
 ## Requirements
 
 | Name | Version |
@@ -129,6 +175,10 @@ module "main_resource_group" {
 | budget_forecast_threshold | The budget forecast threshold percentage that triggers a notification | `number` | `80` | no |
 | budget_actual_threshold | The budget actual threshold percentage that triggers a notification | `number` | `100` | no |
 | alert_email_receivers | List of email addresses to receive budget alerts. Required if enable_budget is true | `list(string)` | `[]` | no |
+| action_group_short_name_override | Override the action group short name (max 12 characters) | `string` | `null` | no |
+| enable_resource_health_alert | Enable resource health monitoring and alerts | `bool` | `false` | no |
+| health_alert_resource_types | List of resource types to monitor for health status | `list(string)` | `null` | no |
+| health_alert_email_receivers | List of email addresses to receive health alerts | `list(string)` | `[]` | no |
 
 ## Outputs
 
@@ -144,10 +194,12 @@ module "main_resource_group" {
 | key_vault_uri | URI of the main key vault |
 | admin_group_id | Object ID of the admin group |
 | admin_group_name | Display name of the admin group |
-| action_group_id | ID of the budget action group (if enabled) |
-| action_group_name | Name of the budget action group (if enabled) |
+| action_group_id | ID of the action group (if budget or health alerts are enabled) |
+| action_group_name | Name of the action group (if budget or health alerts are enabled) |
 | budget_id | ID of the subscription budget (if enabled) |
 | budget_name | Name of the subscription budget (if enabled) |
+| health_alert_id | ID of the resource health alert (if enabled) |
+| health_alert_name | Name of the resource health alert (if enabled) |
 
 ## Naming Conventions
 
@@ -158,6 +210,7 @@ The module follows these naming conventions:
 - Admin Group: `{project}-admin`
 - Budget: `budget-monthly-{project}-{environment}`
 - Action Group: `agrp-{project}`
+- Health Alert: `health-alert-{project}-{environment}`
 
 ## Budget and Alerting
 
@@ -176,6 +229,33 @@ When `enable_budget` is set to `true`, the module creates:
 The module validates that:
 - At least one email address is provided when budget is enabled
 - All email addresses follow a valid email format
+
+## Resource Health Monitoring
+
+When `enable_resource_health_alert` is set to `true`, the module creates:
+
+1. **Azure Monitor Action Group**: Shared with budget alerts or created specifically for health alerts
+2. **Activity Log Alert**: Monitors resource health status changes from "Available" to "Degraded" or "Unavailable"
+
+### Health Alert Configuration
+
+- **Resource Types**: Optional list of specific resource types to monitor (if not provided, monitors all resources in the resource group)
+- **Health States**: Monitors transitions from "Available" to "Degraded" or "Unavailable"
+- **Scope**: Subscription-level monitoring filtered by the resource group
+
+### Email Configuration
+
+When health alerts are enabled:
+- If budget alerts are also enabled, health alerts use the budget email receivers
+- If budget alerts are not enabled, you must provide `health_alert_email_receivers`
+- The module ensures at least one notification method is configured
+
+### Shared Action Group
+
+The action group is intelligently shared between budget and health alerts:
+- If only budget is enabled: Action group receives budget notifications
+- If only health alerts are enabled: Action group receives health notifications  
+- If both are enabled: Action group receives both types of notifications
 
 ## License
 
