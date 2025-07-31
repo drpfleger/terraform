@@ -54,13 +54,13 @@ output "admin_group_name" {
 
 # Budget and Action Group outputs (conditional)
 output "action_group_id" {
-  description = "ID of the budget action group (if enabled)"
-  value       = var.enable_budget ? azurerm_monitor_action_group.main.id : null
+  description = "ID of the action group (if budget or health alerts are enabled)"
+  value       = var.enable_budget || var.enable_resource_health_alert ? azurerm_monitor_action_group.main.id : null
 }
 
 output "action_group_name" {
-  description = "Name of the budget action group (if enabled)"
-  value       = var.enable_budget ? azurerm_monitor_action_group.main.name : null
+  description = "Name of the action group (if budget or health alerts are enabled)"
+  value       = var.enable_budget || var.enable_resource_health_alert ? azurerm_monitor_action_group.main.name : null
 }
 
 output "budget_id" {
@@ -72,3 +72,7 @@ output "budget_name" {
   description = "Name of the subscription budget (if enabled)"
   value       = var.enable_budget ? azurerm_consumption_budget_subscription.main[0].name : null
 }
+
+# Resource Health Alert outputs (conditional)
+# Note: Outputs are not available when using the resource-health-alert module
+# The module encapsulates the implementation details

@@ -22,11 +22,6 @@ variable "resource_types" {
 variable "environment" {
   description = "The deployment environment or stage (e.g., dev, sbx, tst, prd)"
   type        = string
-
-  validation {
-    condition     = var.environment == "dev" || var.environment == "prd" || var.environment == "sbx" || var.environment == "tst"
-    error_message = "Must be dev, sbx, tst or prd"
-  }
 }
 
 variable "action_group_id" {

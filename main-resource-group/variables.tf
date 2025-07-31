@@ -199,3 +199,38 @@ variable "action_group_short_name_override" {
     error_message = "action_group_short_name_override must be 12 characters or less"
   }
 }
+
+# Resource Health Alert variables
+variable "enable_resource_health_alert" {
+  description = "Enable resource health monitoring and alerts"
+  type        = bool
+  default     = false
+}
+
+variable "health_alert_resource_types" {
+  description = "List of resource types to monitor for health status. If not provided, monitors all resource types in the resource group"
+  type        = list(string)
+  default     = null
+}
+
+variable "health_alert_email_receivers" {
+  description = "List of email addresses to receive health alerts. Used when enable_resource_health_alert is true and enable_budget is false"
+  type        = list(string)
+  default     = []
+
+  validation {
+    condition = alltrue([
+      for email in var.health_alert_email_receivers : can(regex("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$", email))
+    ])
+    error_message = "All email addresses in health_alert_email_receivers must be valid email addresses"
+  }
+
+  validation {
+    condition = var.enable_resource_health_alert == false || (
+      var.enable_resource_health_alert == true && (
+        var.enable_budget == true || length(var.health_alert_email_receivers) > 0
+      )
+    )
+    error_message = "When enable_resource_health_alert is true, either enable_budget must be true OR health_alert_email_receivers must contain at least one email address"
+  }
+}
