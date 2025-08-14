@@ -26,3 +26,12 @@ resource "azuread_application_api_access" "api_access" {
     lookup(data.azuread_service_principal.apis[each.key].oauth2_permission_scope_ids, scope, null)
   ]
 }
+
+# Grant admin consent for application permissions automatically
+resource "azuread_app_role_assignment" "api_access" {
+  for_each = local.api_role_assignments
+
+  app_role_id         = lookup(data.azuread_service_principal.apis[each.value.api_key].app_role_ids, each.value.role_name, null)
+  principal_object_id = azuread_service_principal.main.object_id
+  resource_object_id  = data.azuread_service_principal.apis[each.value.api_key].object_id
+}
