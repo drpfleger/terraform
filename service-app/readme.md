@@ -64,7 +64,7 @@ The **full list of optional variables** can be found below. Please note that mos
 - `logout_url`: The logout URL of the app. Default is `null`.
 - `oauth2_scopes`: The OAuth2 scopes defined by the API. Default is an empty map.
 - `app_roles`: The App roles defined by the API. Default is an empty map.
-- `api_access`: Define which APIs this app needs to access with which scopes and/or roles. Default is an empty map.
+- `api_access`: Define which APIs this app needs to access with which scopes and/or roles. Application permissions (api_roles) will automatically receive admin consent via azuread_app_role_assignment resources. Default is an empty map.
 - `rbac_assignments`: Map of Azure Resources to Role assignments for this Service Principal. Default is an empty map.
 - `grant_own_api_access`: Specify whether this App should be granted API permissions for its own scopes and roles. Default is false.
 - `define_optional_claims`: Whether to use optional claims. Default is `false`.
@@ -129,6 +129,7 @@ module "sample_app" {
   # Example: Give this app permissions to access Graph API with scope/role.
   # Assign (user delegated) scope User.Read and (application) role User.Read.All
   # use api_roles for application permissions and api_scopes for delegated permissions
+  # Application permissions (api_roles) will automatically receive admin consent
   # e.g. for Graph API permissions can be looked up here:
   # use the scope/role name to look up the id automatically
   # https://learn.microsoft.com/en-us/graph/permissions-reference
