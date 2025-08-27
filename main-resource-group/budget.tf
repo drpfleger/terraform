@@ -2,7 +2,7 @@
 resource "azurerm_consumption_budget_subscription" "main" {
   count           = var.enable_budget ? 1 : 0
   name            = local.budget_name
-  subscription_id = data.azurerm_subscription.main.subscription_id
+  subscription_id = data.azurerm_subscription.main.id
 
   amount     = var.budget_amount
   time_grain = "Monthly"
