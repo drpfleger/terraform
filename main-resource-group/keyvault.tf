@@ -28,7 +28,7 @@ resource "azurerm_key_vault" "main" {
   }
 
   lifecycle {
-    prevent_destroy = true
+    prevent_destroy = var.keyvault_prevent_destroy_enabled
   }
 
   tags = local.required_tags
