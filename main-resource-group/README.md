@@ -94,23 +94,6 @@ module "main_resource_group" {
 }
 ```
 
-### With Key Vault Destroy Protection Disabled
-
-```hcl
-module "main_resource_group" {
-  source = "github.com/drpfleger/terraform/main-resource-group"
-
-  main_resource_group_name = "rg-myproject-dev"
-  location                 = "westeurope"
-  project                  = "myproject"
-  environment              = "dev"
-  subscription_id          = "12345678-1234-1234-1234-123456789012"
-
-  # Allow key vault to be destroyed (useful for development environments)
-  keyvault_prevent_destroy_enabled = false
-}
-```
-
 ### With Both Budget and Health Alerts
 
 ```hcl
@@ -181,7 +164,6 @@ module "main_resource_group" {
 | keyvault_enable_rbac_authorization | Enable or disable RBAC authorization for the key vault | `bool` | `true` | no |
 | keyvault_public_network_access_enabled | Enable or disable public network access for the key vault | `bool` | `true` | no |
 | keyvault_sku_name | The Name of the SKU used for this Key Vault | `string` | `"standard"` | no |
-| keyvault_prevent_destroy_enabled | Enable or disable prevent_destroy lifecycle on the key vault | `bool` | `true` | no |
 | log_analytics_name | Name of the log analytics workspace | `string` | `null` | no |
 | log_analytics_subscription | Subscription id of the log analytics workspace | `string` | `null` | no |
 | log_analytics_resource_group | Resource group of the log analytics workspace | `string` | `null` | no |
