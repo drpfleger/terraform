@@ -70,6 +70,12 @@ variable "keyvault_sku_name" {
   default     = "standard"
 }
 
+variable "keyvault_prevent_destroy_enabled" {
+  description = "Enable or disable prevent_destroy lifecycle on the key vault. When set to false, allows the key vault to be destroyed"
+  type        = bool
+  default     = true
+}
+
 variable "log_analytics_name" {
   description = "Name of the log analytics workspace"
   type        = string
