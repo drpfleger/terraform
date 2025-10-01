@@ -1,3 +1,13 @@
+# Time anchor for budget to prevent recreation on every run
+resource "time_static" "budget_anchor" {
+  count = var.enable_budget ? 1 : 0
+
+  triggers = {
+    budget_enabled = var.enable_budget
+    budget_amount  = var.budget_amount
+  }
+}
+
 # Subscription Budget
 resource "azurerm_consumption_budget_subscription" "main" {
   count           = var.enable_budget ? 1 : 0
@@ -8,7 +18,7 @@ resource "azurerm_consumption_budget_subscription" "main" {
   time_grain = "Monthly"
 
   time_period {
-    start_date = formatdate("YYYY-MM-01'T'00:00:00'Z'", timeadd(timestamp(), "24h"))
+    start_date = formatdate("YYYY-MM-01'T'00:00:00'Z'", time_static.budget_anchor[0].rfc3339)
   }
 
   notification {
