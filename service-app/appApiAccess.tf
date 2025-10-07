@@ -18,12 +18,12 @@ resource "azuread_application_api_access" "api_access" {
 
   # use role to assign application api access
   role_ids = [for role in each.value.api_roles :
-    lookup(data.azuread_service_principal.apis[each.key].app_role_ids, role, null)
+    lookup(azuread_service_principal.apis[each.key].app_role_ids, role, null)
   ]
 
   # use scope to assign delegated api access
   scope_ids = [for scope in each.value.api_scopes :
-    lookup(data.azuread_service_principal.apis[each.key].oauth2_permission_scope_ids, scope, null)
+    lookup(azuread_service_principal.apis[each.key].oauth2_permission_scope_ids, scope, null)
   ]
 }
 
@@ -31,7 +31,7 @@ resource "azuread_application_api_access" "api_access" {
 resource "azuread_app_role_assignment" "api_access" {
   for_each = local.api_role_assignments
 
-  app_role_id         = lookup(data.azuread_service_principal.apis[each.value.api_key].app_role_ids, each.value.role_name, null)
+  app_role_id         = lookup(azuread_service_principal.apis[each.value.api_key].app_role_ids, each.value.role_name, null)
   principal_object_id = azuread_service_principal.main.object_id
-  resource_object_id  = data.azuread_service_principal.apis[each.value.api_key].object_id
+  resource_object_id  = azuread_service_principal.apis[each.value.api_key].object_id
 }

@@ -5,6 +5,11 @@ data "azuread_service_principal" "apis" {
   for_each  = var.api_access
   client_id = each.value.api_client_id
 }
+resource "azuread_service_principal" "apis" {
+  for_each     = var.api_access
+  client_id    = each.value.api_client_id
+  use_existing = true
+}
 
 # read this projects admin group name
 data "azuread_group" "project_admin_group" {
