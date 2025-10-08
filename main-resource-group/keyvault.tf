@@ -17,7 +17,7 @@ resource "azurerm_key_vault" "main" {
   enabled_for_template_deployment = var.keyvault_enabled_for_template_deployment
   enabled_for_disk_encryption     = var.keyvault_enabled_for_disk_encryption
   enabled_for_deployment          = var.keyvault_enabled_for_deployment
-  enable_rbac_authorization       = var.keyvault_enable_rbac_authorization
+  rbac_authorization_enabled      = var.keyvault_enable_rbac_authorization
   public_network_access_enabled   = var.keyvault_public_network_access_enabled
   purge_protection_enabled        = var.keyvault_purge_protection
   sku_name                        = var.keyvault_sku_name
