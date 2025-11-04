@@ -233,3 +233,9 @@ variable "saml2_token_claims" {
   }))
   default = {}
 }
+
+variable "app_secret_name" {
+  description = "The optional name of the secret in Key Vault."
+  type        = string
+  default     = null
+}

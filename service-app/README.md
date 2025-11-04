@@ -47,30 +47,30 @@ The following variables are optional and have default values: Depending on which
 
 The **full list of optional variables** can be found below. Please note that most of these variables are complex types. Refer to the `variables.tf` files of this module to review their structure.
 
-- `key_vault_id`: The Resource ID of the keyvault where Secrets should be written to. Required if `is_confidential_client` is `true`.
-- `password_rotation_days`: Days after which a tf apply will auto-rotate the password. Default is `180`.
-- `enabled_for_sign_in`: Whether the service principal is enabled for sign-in. Default is `true`.
+- `access_token_claims`: The optional claims to include in the access token. Default is an empty map.
+- `access_token_version`: The version of the access token. Default is `1`. Must be `2` when `sign_in_audience` is either `AzureADandPersonalMicrosoftAccount` or `PersonalMicrosoftAccount`.
+- `api_access`: Define which APIs this app needs to access with which scopes and/or roles. Application permissions (`api_roles`) will automatically receive admin consent via `azuread_app_role_assignment` resources. Default is an empty map.
+- `app_roles`: The App roles defined by the API. Default is an empty map.
+- `app_secret_name`: The optional name of the secret in Key Vault. Default is `null`, which will generate a name based on the app name.
 - `assignement_required`: Whether an assignment of User/Group is required to use the app. Default is `true`.
-- `web_redirect_uris`: The redirect URIs for web applications. Default is an empty list.
+- `define_optional_claims`: Whether to use optional claims. Default is `false`.
+- `enabled_for_sign_in`: Whether the service principal is enabled for sign-in. Default is `true`.
+- `grant_own_api_access`: Specify whether this App should be granted API permissions for its own scopes and roles. Default is `false`.
 - `group_membership_claims`: The group membership claims contained in the token. Default is `["None"]`.
-- `sign_in_audience`: The sign-in audience of the app. Default is `"AzureADMyOrg"`.
-- `known_client_applications`: The App IDs of known client applications. Default is an empty list.
-- `access_token_version`: The version of the access token. Default is `1`. Must be `2` when `sign_in_audience` is either `AzureADandPersonalMicrosoftAccount` or `PersonalMicrosoftAccount`
-- `public_client_redirect_uris`: The redirect URIs for public clients. Default is an empty list.
-- `spa_redirect_uris`: The redirect URIs for single-page applications. Default is an empty list.
-- `implicit_grant`: Whether to enable implicit grant flow. Default is
-`{ access_token_issuance_enabled = false, id_token_issuance_enabled = false }`.
 - `homepage_url`: The homepage URL of the app. Default is `null`.
+- `id_token_claims`: The optional claims to include in the id token. Default is an empty map.
+- `implicit_grant`: Whether to enable implicit grant flow. Default is `{ access_token_issuance_enabled = false, id_token_issuance_enabled = false }`.
+- `key_vault_id`: The Resource ID of the keyvault where Secrets should be written to. Required if `is_confidential_client` is `true`.
+- `known_client_applications`: The App IDs of known client applications. Default is an empty list.
 - `logout_url`: The logout URL of the app. Default is `null`.
 - `oauth2_scopes`: The OAuth2 scopes defined by the API. Default is an empty map.
-- `app_roles`: The App roles defined by the API. Default is an empty map.
-- `api_access`: Define which APIs this app needs to access with which scopes and/or roles. Application permissions (api_roles) will automatically receive admin consent via azuread_app_role_assignment resources. Default is an empty map.
+- `password_rotation_days`: Days after which a `tf apply` will auto-rotate the password. Default is `180`.
+- `public_client_redirect_uris`: The redirect URIs for public clients. Default is an empty list.
 - `rbac_assignments`: Map of Azure Resources to Role assignments for this Service Principal. Default is an empty map.
-- `grant_own_api_access`: Specify whether this App should be granted API permissions for its own scopes and roles. Default is false.
-- `define_optional_claims`: Whether to use optional claims. Default is `false`.
-- `access_token_claims`: The optional claims to include in the access token. Default is an empty map.
-- `id_token_claims`: The optional claims to include in the id token. Default is an empty map.
 - `saml2_token_claims`: The optional claims to include in the saml2 token. Default is an empty map.
+- `sign_in_audience`: The sign-in audience of the app. Default is `"AzureADMyOrg"`.
+- `spa_redirect_uris`: The redirect URIs for single-page applications. Default is an empty list.
+- `web_redirect_uris`: The redirect URIs for web applications. Default is an empty list.
 
 ### Example with Optional Variables
 
@@ -95,7 +95,8 @@ module "sample_app" {
   sign_in_audience          = "AzureADMyOrg"
   known_client_applications = ["client-app-id"]
   access_token_version      = 2
-  
+  app_secret_name           = "sample-app-secret"
+
   homepage_url  = "https://example.com"
   logout_url    = "https://example.com/logout"
   # e.g. define two scopes, one user one admin
@@ -145,7 +146,7 @@ module "sample_app" {
   # Scope_id needs to be the resource id for which this Role is assigned
   # Role is the display name of the Role as seen in Azure portal
   # To use IDs as scope from a different module defined in the same main.tf file
-  # it makes sense to output the id from the other module and pass it here. 
+  # it makes sense to output the id from the other module and pass it here.
   rbac_assignments = {
     "assignment1" = {
       scope_id             = module.<module_name>.<output_name>

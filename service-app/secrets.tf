@@ -20,7 +20,7 @@ resource "time_rotating" "main" {
 # Write password to key vault, pw rotation creates a new version of this secret
 resource "azurerm_key_vault_secret" "main" {
   count        = (var.is_confidential_client && var.use_password) ? 1 : 0
-  name         = local.app_secret_name
+  name         = var.app_secret_name != null ? var.app_secret_name : local.app_secret_name
   key_vault_id = var.key_vault_id
   value        = azuread_application_password.main[count.index].value
 
