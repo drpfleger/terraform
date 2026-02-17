@@ -73,7 +73,7 @@ variable "enabled_for_sign_in" {
   default     = true
 }
 
-variable "assignement_required" {
+variable "assignment_required" {
   description = "Whether an assignment of User/Group is required to use the app. False: Any user in the sign in audience can use the app."
   type        = bool
   default     = true
