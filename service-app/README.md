@@ -52,7 +52,7 @@ The **full list of optional variables** can be found below. Please note that mos
 - `api_access`: Define which APIs this app needs to access with which scopes and/or roles. Application permissions (`api_roles`) will automatically receive admin consent via `azuread_app_role_assignment` resources. Default is an empty map.
 - `app_roles`: The App roles defined by the API. Default is an empty map.
 - `app_secret_name`: The optional name of the secret in Key Vault. Default is `null`, which will generate a name based on the app name.
-- `assignement_required`: Whether an assignment of User/Group is required to use the app. Default is `true`.
+- `assignment_required`: Whether an assignment of User/Group is required to use the app. Default is `true`.
 - `define_optional_claims`: Whether to use optional claims. Default is `false`.
 - `enabled_for_sign_in`: Whether the service principal is enabled for sign-in. Default is `true`.
 - `grant_own_api_access`: Specify whether this App should be granted API permissions for its own scopes and roles. Default is `false`.
