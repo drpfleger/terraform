@@ -27,6 +27,13 @@ resource "azuread_application_api_access" "api_access" {
   ]
 }
 
+# required to read apis
+resource "azuread_service_principal" "apis" {
+  for_each     = var.api_access
+  client_id    = each.value.api_client_id
+  use_existing = true
+}
+
 # Grant admin consent for application permissions automatically
 resource "azuread_app_role_assignment" "api_access" {
   for_each = local.api_role_assignments
