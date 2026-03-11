@@ -5,6 +5,7 @@ This repository contains a collection of reusable Terraform modules for Azure in
 ## 🚀 Purpose
 
 These modules are designed to:
+
 - Accelerate Azure infrastructure deployment with reusable, tested components
 - Enforce consistent naming conventions and tagging across resources
 - Provide secure, enterprise-ready configurations
@@ -13,13 +14,15 @@ These modules are designed to:
 
 ## 📦 Available Modules
 
-| Module | Description | Status |
-|--------|-------------|--------|
-| [**main-resource-group**](./main-resource-group/) | Central resource group with Key Vault, admin groups, network watcher, and optional budget/health monitoring | ✅ Ready |
-| [**diagnostic-settings**](./diagnostic-settings/) | Azure Monitor diagnostic settings for log and metric collection | ✅ Ready |
-| [**service-app**](./service-app/) | Azure AD service application with configurable permissions and RBAC | ✅ Ready |
-| [**resource-health-alert**](./resource-health-alert/) | Resource health monitoring with activity log alerts | ✅ Ready |
-| [**state-storage**](./state-storage/) | Terraform state storage with configurable retention and security | ✅ Ready |
+| Module                                                | Description                                                                                                              | Status   |
+| ----------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ | -------- |
+| [**main-resource-group**](./main-resource-group/)     | Central resource group with Key Vault, admin groups, network watcher, and optional budget/health monitoring              | ✅ Ready |
+| [**diagnostic-settings**](./diagnostic-settings/)     | Azure Monitor diagnostic settings for log and metric collection                                                          | ✅ Ready |
+| [**service-app**](./service-app/)                     | Azure AD service application with configurable permissions and RBAC                                                      | ✅ Ready |
+| [**resource-health-alert**](./resource-health-alert/) | Resource health monitoring with activity log alerts                                                                      | ✅ Ready |
+| [**state-storage**](./state-storage/)                 | Terraform state storage with configurable retention and security                                                         | ✅ Ready |
+| [**entra-directory-pim**](./pim-entra/)               | Privileged Identity Management for Entra Directory roles (directory-level role eligibility and activation)               | ✅ Ready |
+| [**azure-subscription-pim**](./pim-subscriptions/)    | Privileged Identity Management for Azure subscription admin groups (subscription-level group eligibility and activation) | ✅ Ready |
 
 ## 🏗️ Module Structure
 
@@ -97,13 +100,13 @@ module "api_service_app" {
 
 All modules follow consistent naming patterns based on [Microsoft's Azure naming conventions](https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/ready/azure-best-practices/resource-abbreviations):
 
-| Resource Type | Pattern | Example |
-|---------------|---------|---------|
-| Resource Group | `rg-{project}-{environment}` | `rg-myproject-dev` |
-| Key Vault | `kvt-{project}-{environment}` | `kvt-myproject-dev` |
+| Resource Type   | Pattern                              | Example                |
+| --------------- | ------------------------------------ | ---------------------- |
+| Resource Group  | `rg-{project}-{environment}`         | `rg-myproject-dev`     |
+| Key Vault       | `kvt-{project}-{environment}`        | `kvt-myproject-dev`    |
 | Storage Account | `sto{project}{purpose}{environment}` | `stomyprojectstatedev` |
-| Network Watcher | `nw-{project}` | `nw-myproject` |
-| Action Group | `agrp-{project}` | `agrp-myproject` |
+| Network Watcher | `nw-{project}`                       | `nw-myproject`         |
+| Action Group    | `agrp-{project}`                     | `agrp-myproject`       |
 
 ## 🔐 Security & Compliance
 
@@ -133,11 +136,11 @@ locals {
 
 ### Core Requirements
 
-| Name | Version |
-|------|---------|
-| terraform | >= 1.9 |
-| azurerm | >= 4.31.0 |
-| azuread | >= 3.0 |
+| Name      | Version   |
+| --------- | --------- |
+| terraform | >= 1.9    |
+| azurerm   | >= 4.31.0 |
+| azuread   | >= 3.0    |
 
 ### Cross-Subscription Scenarios
 
@@ -163,7 +166,7 @@ provider "azurerm" {
 Supported environments with validation:
 
 - `dev` - Development
-- `sbx` - Sandbox  
+- `sbx` - Sandbox
 - `tst` - Test
 - `prd` - Production
 - `main` - Main/Primary
@@ -177,12 +180,12 @@ Supported environments with validation:
 # Core infrastructure
 module "main_infrastructure" {
   source = "github.com/drpfleger/terraform/main-resource-group"
-  
+
   main_resource_group_name = "rg-myproject-dev"
   project                  = "myproject"
   environment              = "dev"
   subscription_id          = var.subscription_id
-  
+
   enable_budget              = true
   budget_amount              = 1000
   alert_email_receivers      = ["admin@company.com"]
@@ -192,19 +195,19 @@ module "main_infrastructure" {
 # State storage (deploy separately)
 module "state_storage" {
   source = "github.com/drpfleger/terraform/state-storage"
-  
+
   resource_group_name = "rg-terraform-state"
   project            = "myproject"
   environment        = "dev"
   subscription_id    = var.subscription_id
-  
+
   delete_retention_blob_in_days = 30
 }
 
 # Service application
 module "api_app" {
   source = "github.com/drpfleger/terraform/service-app"
-  
+
   project                = "myproject"
   environment            = "dev"
   app_type               = "api"
@@ -221,12 +224,12 @@ module "api_app" {
 # Enable diagnostics for multiple resources
 module "storage_diagnostics" {
   source = "github.com/drpfleger/terraform/diagnostic-settings"
-  
+
   providers = {
     azurerm.target        = azurerm
     azurerm.log_analytics = azurerm.monitoring
   }
-  
+
   target_resource_id           = azurerm_storage_account.app.id
   log_analytics_name           = "central-log-workspace"
   log_analytics_resource_group = "rg-monitoring"
@@ -234,16 +237,16 @@ module "storage_diagnostics" {
 
 module "keyvault_diagnostics" {
   source = "github.com/drpfleger/terraform/diagnostic-settings"
-  
+
   providers = {
     azurerm.target        = azurerm
     azurerm.log_analytics = azurerm.monitoring
   }
-  
+
   target_resource_id           = module.main_infrastructure.key_vault_id
   log_analytics_name           = "central-log-workspace"
   log_analytics_resource_group = "rg-monitoring"
-  
+
   user_defined_category_groups = ["audit", "allLogs"]
 }
 ```
@@ -284,4 +287,4 @@ When contributing to this repository:
 
 ## 📄 License
 
-This repository is maintained by the drpfleger infrastructure team. All modules are designed for internal use and follow enterprise security standards.
+This repository is maintained by the drpfleger cloud team. All modules are designed for internal use and follow enterprise security standards.
