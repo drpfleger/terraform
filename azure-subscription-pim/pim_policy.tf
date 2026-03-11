@@ -1,4 +1,4 @@
-# This defines the group policy for the High privileged groups in the var.pim_config.
+# This defines the group policy for the high-privileged groups managed by this module.
 # The policy is activated for the role "member" and requires approval, justification and multi-factor authentication.
 # Since no eligible or active assignments for the role 'owner' of the pim groups are defined, policies for role 'owner' are not defined.
 resource "azuread_group_role_management_policy" "pim_member_policy" {

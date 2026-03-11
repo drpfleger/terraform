@@ -21,8 +21,8 @@ These modules are designed to:
 | [**service-app**](./service-app/)                     | Azure AD service application with configurable permissions and RBAC                                                      | ✅ Ready |
 | [**resource-health-alert**](./resource-health-alert/) | Resource health monitoring with activity log alerts                                                                      | ✅ Ready |
 | [**state-storage**](./state-storage/)                 | Terraform state storage with configurable retention and security                                                         | ✅ Ready |
-| [**entra-directory-pim**](./pim-entra/)               | Privileged Identity Management for Entra Directory roles (directory-level role eligibility and activation)               | ✅ Ready |
-| [**azure-subscription-pim**](./pim-subscriptions/)    | Privileged Identity Management for Azure subscription admin groups (subscription-level group eligibility and activation) | ✅ Ready |
+| [**azuread-role-pim**](./azuread-role-pim/)           | Privileged Identity Management for Entra Directory roles (directory-level role eligibility and activation)               | ✅ Ready |
+| [**azure-subscription-pim**](./azure-subscription-pim/)| Privileged Identity Management for Azure subscription admin groups (subscription-level group eligibility and activation) | ✅ Ready |
 
 ## 🏗️ Module Structure
 
