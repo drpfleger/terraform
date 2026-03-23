@@ -5,6 +5,7 @@ resource "azurerm_policy_definition" "main" {
   policy_type         = "Custom"
   management_group_id = data.azurerm_management_group.main.id
   policy_rule         = jsonencode(var.policy_rule)
+  metadata            = jsonencode(var.meta_data)
 }
 
 resource "azurerm_management_group_policy_assignment" "example" {

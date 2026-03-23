@@ -43,3 +43,9 @@ variable "assignment_name" {
   description = "Name of the policy assignment"
   type        = string
 }
+
+variable "meta_data" {
+  description = "Metadata for the policy definition in JSON format as a string."
+  type        = any
+  default     = null
+}
