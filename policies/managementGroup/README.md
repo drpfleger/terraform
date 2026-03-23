@@ -31,6 +31,9 @@ Here is the structure used by a policy JSON file:
 			]
 		},
 		"then": { "effect": "audit" }
+	},
+	"meta_data": {
+		"category": "Security"
 	}
 }
 ```
@@ -40,6 +43,7 @@ Notes:
 - `assignment_name` must be unique in the management group and should stay within 1-24 characters.
 - `policy_mode` is usually `Indexed` or `All`.
 - `policy_rule` must follow the Azure Policy JSON schema.
+- `meta_data` is optional and can include additional information about the policy definition.
 
 ## Usage
 
@@ -88,6 +92,7 @@ module "management_group_policies" {
   policy_name         = each.value.policy_name
   policy_display_name = each.value.policy_display_name
   policy_rule         = each.value.policy_rule
+  meta_data           = each.value.meta_data
   assignment_name     = each.value.assignment_name
   management_group    = each.value.mg_name
 }
