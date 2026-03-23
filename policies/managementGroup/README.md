@@ -91,13 +91,13 @@ module "management_group_policies" {
   assignment_name     = each.value.assignment_name
   management_group_id = each.value.mg_name
 }
+```
 
-The environment code is responsible for:
+## The environment code is responsible for:
 
 - Discovering the `management-group-policies/<management-group-name>/*.json` files
 - Normalizing JSON into the `local.management_group_policies` map
 - Supplying the `management_group_id` and other inputs
-```
 
 ## Quick start
 
