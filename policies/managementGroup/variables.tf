@@ -35,7 +35,7 @@ variable "policy_mode" {
 }
 
 variable "policy_rule" {
-  description = "Policy rule in JSON format (object or string, but typically object)"
+  description = "Policy rule in JSON format as a string. Must follow Azure Policy JSON schema."
   type        = any
 }
 
