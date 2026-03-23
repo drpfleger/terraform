@@ -88,7 +88,6 @@ module "management_group_policies" {
   policy_name         = each.value.policy_name
   policy_display_name = each.value.policy_display_name
   policy_rule         = each.value.policy_rule
-  policy_meta_data    = each.value.policy_meta_data
   assignment_name     = each.value.assignment_name
   management_group_id = each.value.mg_name
 }

@@ -39,11 +39,6 @@ variable "policy_rule" {
   type        = any
 }
 
-variable "policy_meta_data" {
-  description = "Policy metadata in JSON format (object or string, but typically object)"
-  type        = any
-}
-
 variable "assignment_name" {
   description = "Name of the policy assignment"
   type        = string
