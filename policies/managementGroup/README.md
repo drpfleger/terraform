@@ -89,7 +89,7 @@ module "management_group_policies" {
   policy_display_name = each.value.policy_display_name
   policy_rule         = each.value.policy_rule
   assignment_name     = each.value.assignment_name
-  management_group_id = each.value.mg_name
+  management_group    = each.value.mg_name
 }
 ```
 
@@ -97,7 +97,7 @@ module "management_group_policies" {
 
 - Discovering the `management-group-policies/<management-group-name>/*.json` files
 - Normalizing JSON into the `local.management_group_policies` map
-- Supplying the `management_group_id` and other inputs
+- Supplying the `management_group` and other inputs
 
 ## Quick start
 

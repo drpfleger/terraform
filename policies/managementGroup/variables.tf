@@ -1,5 +1,5 @@
-variable "management_group_id" {
-  description = "Name (group_id) of the management group to assign policies to (not the full ARM resource ID)"
+variable "management_group" {
+  description = "Name (group_id) of the management group to assign policies to."
   type        = string
 }
 

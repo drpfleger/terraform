@@ -1,3 +1,3 @@
 data "azurerm_management_group" "main" {
-  name = var.management_group_id
+  name = var.management_group
 }
