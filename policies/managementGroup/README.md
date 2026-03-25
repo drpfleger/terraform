@@ -1,8 +1,6 @@
 # Management Group Policy Module
 
-This module creates a custom Azure Policy definition and assigns it to a management group. It is driven by simple JSON policy files.
-
-The idea: create a folder named after the management group and place policy JSON files inside it. The environment code loads and applies everything automatically.
+This module creates a custom Azure Policy definition at a specified management group scope and assigns it to one or more management groups. It is driven by variables and supports assignment to multiple management groups.
 
 ## How it works
 
@@ -12,25 +10,37 @@ Your environment code loads policy JSON files from:
 management-group-policies/<management-group-name>/*.json
 ```
 
-Each JSON file defines the policy display name, rule and assignment name. The folder name supplies the management group scope.
+Each JSON file defines the policy display name, rule and assignment name. The folder name supplies the management group where the policy is created.
 
 ### Example policy JSON
 
-Here is the structure used by a policy JSON file:
+Here is the structure used by a policy JSON file with the name `enforce-https.json`:
 
 ```json
 {
+	"assignment_management_group_ids": [
+		"landing-zone-management-group",
+		"platform-management-group"
+	],
 	"assignment_name": "root-https",
 	"policy_display_name": "Audit HTTPS Only on App Services",
-	"policy_mode": "Indexed",
+	"policy_mode": "All",
 	"policy_rule": {
 		"if": {
 			"allOf": [
-				{ "field": "type", "equals": "Microsoft.Web/sites" },
-				{ "field": "Microsoft.Web/sites/httpsOnly", "equals": false }
+				{
+					"field": "type",
+					"equals": "Microsoft.Web/sites"
+				},
+				{
+					"field": "Microsoft.Web/sites/httpsOnly",
+					"equals": false
+				}
 			]
 		},
-		"then": { "effect": "audit" }
+		"then": {
+			"effect": "audit"
+		}
 	},
 	"meta_data": {
 		"category": "Security"
@@ -40,6 +50,7 @@ Here is the structure used by a policy JSON file:
 
 Notes:
 
+- `policy_name` is derived from the JSON file name and should be unique in the management group. Use a descriptive name that reflects the policy's purpose.
 - `assignment_name` must be unique in the management group and should stay within 1-24 characters.
 - `policy_mode` is usually `Indexed` or `All`.
 - `policy_rule` must follow the Azure Policy JSON schema.
@@ -68,7 +79,7 @@ provider "azurerm" {
 
 locals {
   # Load all JSON files from the management-group-policies folder
-  # Subfolder names are used to determine the management group scope
+  # Subfolder names are used to determine the management group where the policy is defined
   management_group_policy_files = fileset("${path.module}/management-group-policies", "**/*.json")
 
   # Normalize the JSON files into a map with necessary inputs for the module
@@ -76,8 +87,8 @@ locals {
     for f in local.management_group_policy_files : f => merge(
       jsondecode(file("${path.module}/management-group-policies/${f}")),
       {
-        mg_name     = split("/", f)[0]
-        policy_name = trimsuffix(basename(f), ".json")
+        definition_management_group_name = split("/", f)[0]
+        policy_name                      = trimsuffix(basename(f), ".json")
       }
     )
   }
@@ -94,7 +105,8 @@ module "management_group_policies" {
   policy_rule         = each.value.policy_rule
   meta_data           = each.value.meta_data
   assignment_name     = each.value.assignment_name
-  management_group    = each.value.mg_name
+  management_group    = each.value.assignment_management_group_name
+  definition_management_group = each.value.definition_management_group_name
 }
 ```
 

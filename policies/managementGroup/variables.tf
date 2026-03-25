@@ -1,6 +1,11 @@
-variable "management_group" {
-  description = "Name (group_id) of the management group to assign policies to."
+variable "definition_management_group" {
+  description = "Name (group_id) of the management group the policy is available to (get inherited by child management groups)."
   type        = string
+}
+
+variable "assignment_management_groups" {
+  description = "List of names (group_id) of the management groups to assign policies to."
+  type        = list(string)
 }
 
 variable "policy_name" {
