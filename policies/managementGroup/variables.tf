@@ -11,6 +11,11 @@ variable "assignment_management_groups" {
 variable "policy_name" {
   description = "Name of the policy definition"
   type        = string
+
+  validation {
+    condition     = length(var.policy_name) >= 1 && length(var.policy_name) <= 64
+    error_message = "policy_name must be between 1 and 24 characters."
+  }
 }
 
 variable "policy_display_name" {
@@ -47,6 +52,23 @@ variable "policy_rule" {
 variable "assignment_name" {
   description = "Name of the policy assignment"
   type        = string
+
+  validation {
+    condition     = length(var.assignment_name) >= 1 && length(var.assignment_name) <= 24
+    error_message = "assignment_name must be between 1 and 24 characters."
+  }
+}
+
+variable "assignment_display_name" {
+  description = "Display name of the policy assignment"
+  type        = string
+  default     = ""
+}
+
+variable "assignment_description" {
+  description = "A description which should be used for this Policy Assignment"
+  type        = string
+  default     = ""
 }
 
 variable "meta_data" {

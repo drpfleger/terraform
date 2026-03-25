@@ -12,6 +12,8 @@ resource "azurerm_management_group_policy_assignment" "main" {
   for_each = data.azurerm_management_group.assignment
 
   name                 = var.assignment_name
+  display_name         = var.assignment_display_name
+  description          = var.assignment_description
   policy_definition_id = azurerm_policy_definition.main.id
   management_group_id  = each.value.id
 }
