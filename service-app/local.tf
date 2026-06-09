@@ -1,4 +1,9 @@
 locals {
+  owner_object_ids = sort(distinct(concat(
+    data.azuread_group.project_admin_group.members,
+    var.additional_owner_object_ids
+  )))
+
   app_scopes = values(azuread_application_permission_scope.main)[*].scope_id
   application_roles = [
     for role in azuread_application_app_role.main :
