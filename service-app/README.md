@@ -38,7 +38,7 @@ module "sample_app" {
 
 The following variables are optional and have default values: Depending on which kind of app you want to define several different options can be set.
 
-Owners are managed deterministically from `${project}-admin` group members plus optional `additional_owner_object_ids`. The current Terraform caller is not added automatically.
+Owners are managed deterministically from `<project>-admin` group members plus optional `additional_owner_object_ids`. The current Terraform caller is not added automatically.
 
 #### Quick Reference:
 
