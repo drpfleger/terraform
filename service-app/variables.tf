@@ -79,6 +79,20 @@ variable "assignment_required" {
   default     = true
 }
 
+variable "additional_owner_object_ids" {
+  description = "Optional list of additional Entra object IDs to set as owners on the application and service principal."
+  type        = list(string)
+  default     = []
+
+  validation {
+    condition = alltrue([
+      for object_id in var.additional_owner_object_ids :
+      can(regex("^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$", object_id))
+    ])
+    error_message = "Each additional_owner_object_ids value must be a valid GUID."
+  }
+}
+
 variable "web_redirect_uris" {
   description = "The redirect URIs for web applications."
   type        = list(string)

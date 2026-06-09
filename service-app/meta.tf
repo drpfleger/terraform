@@ -1,5 +1,3 @@
-data "azuread_client_config" "current" {}
-
 # read required apis
 data "azuread_service_principal" "apis" {
   for_each  = var.api_access

@@ -8,7 +8,7 @@ resource "azuread_application" "main" {
   display_name            = local.app_name
   description             = var.description
   group_membership_claims = var.group_membership_claims
-  owners                  = distinct(concat([data.azuread_client_config.current.object_id], data.azuread_group.project_admin_group.members))
+  owners                  = local.owner_object_ids
   prevent_duplicate_names = true
   sign_in_audience        = var.sign_in_audience
 

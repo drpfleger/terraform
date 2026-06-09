@@ -38,6 +38,8 @@ module "sample_app" {
 
 The following variables are optional and have default values: Depending on which kind of app you want to define several different options can be set.
 
+Owners are managed deterministically from `${project}-admin` group members plus optional `additional_owner_object_ids`. The current Terraform caller is not added automatically.
+
 #### Quick Reference:
 
 - If this app requires access to other APIs (e.g. calls to Graph API) have a look at the `api_access` variable.
@@ -50,6 +52,7 @@ The **full list of optional variables** can be found below. Please note that mos
 - `access_token_claims`: The optional claims to include in the access token. Default is an empty map.
 - `access_token_version`: The version of the access token. Default is `1`. Must be `2` when `sign_in_audience` is either `AzureADandPersonalMicrosoftAccount` or `PersonalMicrosoftAccount`.
 - `api_access`: Define which APIs this app needs to access with which scopes and/or roles. Application permissions (`api_roles`) will automatically receive admin consent via `azuread_app_role_assignment` resources. Default is an empty map.
+- `additional_owner_object_ids`: Additional Entra object IDs that should be set as owners alongside project-admin group members. Default is an empty list.
 - `app_roles`: The App roles defined by the API. Default is an empty map.
 - `app_secret_name`: The optional name of the secret in Key Vault. Default is `null`, which will generate a name based on the app name.
 - `assignment_required`: Whether an assignment of User/Group is required to use the app. Default is `true`.
@@ -96,6 +99,9 @@ module "sample_app" {
   known_client_applications = ["client-app-id"]
   access_token_version      = 2
   app_secret_name           = "sample-app-secret"
+  additional_owner_object_ids = [
+    "11111111-1111-1111-1111-111111111111"
+  ]
 
   homepage_url  = "https://example.com"
   logout_url    = "https://example.com/logout"
