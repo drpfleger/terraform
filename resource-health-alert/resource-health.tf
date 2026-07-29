@@ -14,7 +14,7 @@ resource "azurerm_monitor_activity_log_alert" "default_health_status" {
     category        = "ResourceHealth"
     resource_group  = local.resource_health_scope_resource_group
     resource_groups = local.resource_health_scope_resource_groups
-    resource_types  = var.resource_types
+    resource_types  = local.effective_resource_types
 
     resource_health {
       current  = ["Degraded", "Unavailable"]
