@@ -68,6 +68,25 @@ module "resource_health_alert" {
 }
 ```
 
+### Derive Resource Types from ARM IDs
+
+```hcl
+module "resource_health_alert" {
+  source = "github.com/drpfleger/terraform/resource-health-alert"
+
+  subscription_id     = "12345678-1234-1234-1234-123456789012"
+  project             = "myproject"
+  environment         = "dev"
+  resource_group_name = "rg-myproject-dev"
+  action_group_id     = "/subscriptions/12345678-1234-1234-1234-123456789012/resourceGroups/rg-monitoring/providers/Microsoft.Insights/actionGroups/ag-alerts"
+
+  resource_ids = [
+    "/subscriptions/12345678-1234-1234-1234-123456789012/resourceGroups/rg-myproject-dev/providers/Microsoft.Compute/virtualMachines/vm1",
+    "/subscriptions/12345678-1234-1234-1234-123456789012/resourceGroups/rg-myproject-dev/providers/Microsoft.Storage/storageAccounts/stoexample"
+  ]
+}
+```
+
 ### Enable ServiceHealth
 
 ```hcl
@@ -134,6 +153,7 @@ module "resource_health_alert" {
 | resource_group_name          | Resource group where alert resources are created                                 | `string`       | n/a                                                         | yes      |
 | action_group_id              | Action group ID used by the alerts                                               | `string`       | n/a                                                         | yes      |
 | resource_types               | Optional resource type filter for ResourceHealth                                 | `list(string)` | `null`                                                      | no       |
+| resource_ids                 | Optional ARM resource IDs used to derive ResourceHealth resource types           | `list(string)` | `null`                                                      | no       |
 | create_resource_health_alert | Create ResourceHealth alert resource                                             | `bool`         | `true`                                                      | no       |
 | enable_health_alert          | Enable or disable ResourceHealth alert when created                              | `bool`         | `true`                                                      | no       |
 | resource_health_scope_mode   | ResourceHealth filter mode (`subscription`, `resource_group`, `resource_groups`) | `string`       | `"subscription"`                                            | no       |
@@ -163,6 +183,12 @@ The ResourceHealth alert monitors the following transition:
 
 - Previous: `Available`
 - Current: `Degraded` or `Unavailable`
+
+Resource type filter behavior for ResourceHealth is:
+
+1. The module merges `resource_types` and types derived from `resource_ids`
+2. The merged list is de-duplicated
+3. If both inputs are omitted (or effectively empty), `resource_types` is `null`, which means no resource type filter
 
 ## Tagging
 

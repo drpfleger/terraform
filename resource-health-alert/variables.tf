@@ -19,6 +19,19 @@ variable "resource_types" {
   default     = null
 }
 
+variable "resource_ids" {
+  description = "Optional ARM resource IDs used to derive ResourceHealth resource types when resource_types is not provided"
+  type        = list(string)
+  default     = null
+
+  validation {
+    condition = var.resource_ids == null || alltrue([
+      for resource_id in var.resource_ids : can(regex("(?i)^/subscriptions/[^/]+/.*/providers/[^/]+/.+$", trimspace(resource_id)))
+    ])
+    error_message = "Each entry in resource_ids must be a valid ARM resource ID"
+  }
+}
+
 variable "create_resource_health_alert" {
   description = "Whether to create the ResourceHealth activity log alert"
   type        = bool
