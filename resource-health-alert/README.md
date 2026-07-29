@@ -1,199 +1,176 @@
 # Resource Health Alert Module
 
-This Terraform module creates Azure Monitor activity log alerts for resource health status monitoring. It monitors resource health status changes from "Available" to "Degraded" or "Unavailable" and triggers notifications through an Azure Monitor Action Group.
+This Terraform module creates Azure Monitor activity log alerts for Resource Health and (optionally) Service Health.
+
+## Scope and Subscription Model
+
+- Monitoring is always scoped to `subscription_id`.
+- The module is intended to monitor the same subscription where resources are deployed.
+- Cross-subscription monitoring is not part of this module design.
 
 ## Features
 
-- **Resource Health Monitoring**: Monitors health status changes of Azure resources
-- **Subscription-Level Scope**: Monitors resources across the entire subscription, filtered by resource group
-- **Flexible Resource Types**: Can monitor all resource types or specific types only
-- **Action Group Integration**: Integrates with existing Azure Monitor Action Groups for notifications
-- **Configurable Alerting**: Can be enabled or disabled as needed
+- ResourceHealth alert with subscription-wide monitoring as the default behavior.
+- Optional ResourceHealth filtering by one resource group or a list of resource groups.
+- Optional ServiceHealth alert with configurable events, services, and locations.
+- Action group integration for both alert types.
+- Backward-compatible resource naming for the existing ResourceHealth alert.
+
+## File Structure
+
+- `resource-health.tf`: ResourceHealth alert definition.
+- `service-health.tf`: ServiceHealth alert definition.
 
 ## Usage
 
-### Basic Usage - All Resource Types
+### Default Subscription-Wide ResourceHealth
 
 ```hcl
-module "resource_health_alert" {
-  source = "github.com/drpfleger/terraform/resource-health-alert"
-
-  subscription_id       = "12345678-1234-1234-1234-123456789012"
-  project              = "myproject"
-  environment          = "dev"
-  resource_group_name  = "rg-myproject-dev"
-  action_group_id      = "/subscriptions/12345678-1234-1234-1234-123456789012/resourceGroups/rg-monitoring/providers/Microsoft.Insights/actionGroups/ag-alerts"
-}
-```
-
-### Monitor Specific Resource Types
-
-```hcl
-module "resource_health_alert" {
-  source = "github.com/drpfleger/terraform/resource-health-alert"
-
-  subscription_id       = "12345678-1234-1234-1234-123456789012"
-  project              = "myproject"
-  environment          = "dev"
-  resource_group_name  = "rg-myproject-dev"
-  action_group_id      = "/subscriptions/12345678-1234-1234-1234-123456789012/resourceGroups/rg-monitoring/providers/Microsoft.Insights/actionGroups/ag-alerts"
-
-  resource_types = [
-    "Microsoft.Compute/virtualMachines",
-    "Microsoft.Storage/storageAccounts",
-    "Microsoft.KeyVault/vaults"
-  ]
-}
-```
-
-### Disabled Alert (For Testing)
-
-```hcl
-module "resource_health_alert" {
-  source = "github.com/drpfleger/terraform/resource-health-alert"
-
-  subscription_id       = "12345678-1234-1234-1234-123456789012"
-  project              = "myproject"
-  environment          = "dev"
-  resource_group_name  = "rg-myproject-dev"
-  action_group_id      = "/subscriptions/12345678-1234-1234-1234-123456789012/resourceGroups/rg-monitoring/providers/Microsoft.Insights/actionGroups/ag-alerts"
-
-  enable_health_alert = false
-}
-```
-
-### Integration with Main Resource Group Module
-
-This module is commonly used together with the main-resource-group module:
-
-```hcl
-module "main_resource_group" {
-  source = "github.com/drpfleger/terraform/main-resource-group"
-
-  main_resource_group_name = "rg-myproject-dev"
-  location                 = "westeurope"
-  project                  = "myproject"
-  environment              = "dev"
-  subscription_id          = "12345678-1234-1234-1234-123456789012"
-
-  # Enable budget to create action group
-  enable_budget         = true
-  budget_amount         = 1000
-  alert_email_receivers = ["admin@company.com"]
-}
-
 module "resource_health_alert" {
   source = "github.com/drpfleger/terraform/resource-health-alert"
 
   subscription_id      = "12345678-1234-1234-1234-123456789012"
-  project             = "myproject"
-  environment         = "dev"
-  resource_group_name = module.main_resource_group.resource_group_name
-  action_group_id     = module.main_resource_group.action_group_id
+  project              = "myproject"
+  environment          = "dev"
+  resource_group_name  = "rg-myproject-dev"
+  action_group_id      = "/subscriptions/12345678-1234-1234-1234-123456789012/resourceGroups/rg-monitoring/providers/Microsoft.Insights/actionGroups/ag-alerts"
+}
+```
 
-  resource_types = [
-    "Microsoft.Compute/virtualMachines",
-    "Microsoft.Storage/storageAccounts"
-  ]
+### Legacy Resource Group Filter Mode
+
+```hcl
+module "resource_health_alert" {
+  source = "github.com/drpfleger/terraform/resource-health-alert"
+
+  subscription_id             = "12345678-1234-1234-1234-123456789012"
+  project                     = "myproject"
+  environment                 = "dev"
+  resource_group_name         = "rg-myproject-dev"
+  action_group_id             = "/subscriptions/12345678-1234-1234-1234-123456789012/resourceGroups/rg-monitoring/providers/Microsoft.Insights/actionGroups/ag-alerts"
+  resource_health_scope_mode  = "resource_group"
+}
+```
+
+### ResourceHealth Filtered to Multiple Resource Groups
+
+```hcl
+module "resource_health_alert" {
+  source = "github.com/drpfleger/terraform/resource-health-alert"
+
+  subscription_id            = "12345678-1234-1234-1234-123456789012"
+  project                    = "myproject"
+  environment                = "dev"
+  resource_group_name        = "rg-myproject-dev"
+  action_group_id            = "/subscriptions/12345678-1234-1234-1234-123456789012/resourceGroups/rg-monitoring/providers/Microsoft.Insights/actionGroups/ag-alerts"
+  resource_health_scope_mode = "resource_groups"
+  monitored_resource_groups  = ["rg-myproject-dev", "rg-myproject-shared"]
+}
+```
+
+### Enable ServiceHealth
+
+```hcl
+module "resource_health_alert" {
+  source = "github.com/drpfleger/terraform/resource-health-alert"
+
+  subscription_id             = "12345678-1234-1234-1234-123456789012"
+  project                     = "myproject"
+  environment                 = "dev"
+  resource_group_name         = "rg-myproject-dev"
+  action_group_id             = "/subscriptions/12345678-1234-1234-1234-123456789012/resourceGroups/rg-monitoring/providers/Microsoft.Insights/actionGroups/ag-alerts"
+
+  enable_service_health_alert = true
+  service_health_events       = ["Incident", "Maintenance", "ActionRequired", "Security"]
+  service_health_locations    = ["westeurope", "global"]
+}
+```
+
+### ServiceHealth Only
+
+```hcl
+module "resource_health_alert" {
+  source = "github.com/drpfleger/terraform/resource-health-alert"
+
+  subscription_id              = "12345678-1234-1234-1234-123456789012"
+  project                      = "myproject"
+  environment                  = "dev"
+  resource_group_name          = "rg-myproject-dev"
+  action_group_id              = "/subscriptions/12345678-1234-1234-1234-123456789012/resourceGroups/rg-monitoring/providers/Microsoft.Insights/actionGroups/ag-alerts"
+
+  create_resource_health_alert = false
+  enable_service_health_alert  = true
 }
 ```
 
 ## Requirements
 
-| Name | Version |
-|------|---------|
-| terraform | >= 1.0 |
-| azurerm | >= 4.0 |
+| Name      | Version |
+| --------- | ------- |
+| terraform | >= 1.0  |
+| azurerm   | >= 4.0  |
 
 ## Providers
 
-| Name | Version |
-|------|---------|
-| azurerm | >= 4.0 |
+| Name    | Version |
+| ------- | ------- |
+| azurerm | >= 4.0  |
 
 ## Resources
 
-| Name | Type |
-|------|------|
-| azurerm_monitor_activity_log_alert | resource |
-| azurerm_resource_group | data source |
+| Name                                                             | Type        |
+| ---------------------------------------------------------------- | ----------- |
+| azurerm_monitor_activity_log_alert.default_health_status         | resource    |
+| azurerm_monitor_activity_log_alert.default_service_health_status | resource    |
+| azurerm_resource_group.main                                      | data source |
 
 ## Inputs
 
-| Name | Description | Type | Default | Required |
-|------|-------------|------|---------|----------|
-| subscription_id | The Azure Subscription ID where the resources will be deployed | `string` | n/a | yes |
-| project | The name of the project for which the resources are being created | `string` | n/a | yes |
-| environment | The deployment environment or stage (e.g., dev, sbx, tst, prd) | `string` | n/a | yes |
-| resource_group_name | The name of the resource group where the resources will be deployed | `string` | n/a | yes |
-| action_group_id | The ID of the Action Group to be used for alert notifications | `string` | n/a | yes |
-| resource_types | A list of resource types that need to be monitored for health status | `list(string)` | `null` | no |
-| enable_health_alert | A boolean flag to enable or disable health alerts for the monitored resources | `bool` | `true` | no |
+| Name                         | Description                                                                      | Type           | Default                                                     | Required |
+| ---------------------------- | -------------------------------------------------------------------------------- | -------------- | ----------------------------------------------------------- | -------- |
+| subscription_id              | Azure subscription ID used for monitoring scope                                  | `string`       | n/a                                                         | yes      |
+| project                      | Project name                                                                     | `string`       | n/a                                                         | yes      |
+| environment                  | Environment/stage                                                                | `string`       | n/a                                                         | yes      |
+| resource_group_name          | Resource group where alert resources are created                                 | `string`       | n/a                                                         | yes      |
+| action_group_id              | Action group ID used by the alerts                                               | `string`       | n/a                                                         | yes      |
+| resource_types               | Optional resource type filter for ResourceHealth                                 | `list(string)` | `null`                                                      | no       |
+| create_resource_health_alert | Create ResourceHealth alert resource                                             | `bool`         | `true`                                                      | no       |
+| enable_health_alert          | Enable or disable ResourceHealth alert when created                              | `bool`         | `true`                                                      | no       |
+| resource_health_scope_mode   | ResourceHealth filter mode (`subscription`, `resource_group`, `resource_groups`) | `string`       | `"subscription"`                                            | no       |
+| monitored_resource_groups    | Resource groups to monitor when scope mode is `resource_groups`                  | `list(string)` | `null`                                                      | no       |
+| enable_service_health_alert  | Create ServiceHealth alert resource                                              | `bool`         | `false`                                                     | no       |
+| service_health_events        | ServiceHealth events to monitor                                                  | `list(string)` | `["Incident", "Maintenance", "ActionRequired", "Security"]` | no       |
+| service_health_services      | Optional Azure services filter for ServiceHealth                                 | `list(string)` | `null`                                                      | no       |
+| service_health_locations     | Optional Azure locations filter for ServiceHealth                                | `list(string)` | `null`                                                      | no       |
 
 ## Outputs
 
-This module does not expose any outputs.
+| Name                       | Description                      |
+| -------------------------- | -------------------------------- |
+| resource_health_alert_id   | ID of the ResourceHealth alert   |
+| resource_health_alert_name | Name of the ResourceHealth alert |
+| service_health_alert_id    | ID of the ServiceHealth alert    |
+| service_health_alert_name  | Name of the ServiceHealth alert  |
 
 ## Naming Conventions
 
-The module follows these naming conventions:
+- ResourceHealth alert: `ar-{project}-{environment}`
+- ServiceHealth alert: `ar-{project}-{environment}-sh`
 
-- **Alert Rule**: `ar-{project}-{environment}`
+## ResourceHealth Transitions
 
-## Resource Health Status Monitoring
+The ResourceHealth alert monitors the following transition:
 
-The module monitors the following health status transitions:
-
-| Previous Status | Current Status | Alert Triggered |
-|----------------|----------------|-----------------|
-| Available | Degraded | ✅ Yes |
-| Available | Unavailable | ✅ Yes |
-| Degraded | Available | ❌ No |
-| Unavailable | Available | ❌ No |
-| Degraded | Unavailable | ❌ No |
-| Unavailable | Degraded | ❌ No |
-
-## Monitored Resource Types
-
-When `resource_types` is not specified (null), the alert monitors **all resource types** in the specified resource group.
-
-Common resource types you might want to monitor:
-
-- `Microsoft.Compute/virtualMachines`
-- `Microsoft.Storage/storageAccounts`
-- `Microsoft.KeyVault/vaults`
-- `Microsoft.Network/applicationGateways`
-- `Microsoft.Network/loadBalancers`
-- `Microsoft.Network/networkSecurityGroups`
-- `Microsoft.Network/publicIPAddresses`
-- `Microsoft.Network/virtualNetworks`
-- `Microsoft.Sql/servers`
-- `Microsoft.Web/sites`
-
-## Alert Scope
-
-The alert is scoped to:
-- **Subscription Level**: Monitors resources across the entire subscription
-- **Resource Group Filter**: Only triggers for resources in the specified resource group
-- **Resource Type Filter**: (Optional) Only triggers for specified resource types
-
-## Action Group Requirements
-
-The module requires an existing Azure Monitor Action Group. The Action Group should be configured with appropriate notification methods such as:
-
-- Email notifications
-- SMS notifications
-- Webhook integrations
-- Logic App integrations
-- Azure Functions
+- Previous: `Available`
+- Current: `Degraded` or `Unavailable`
 
 ## Tagging
 
-All created resources are automatically tagged with:
+All created resources are tagged with:
 
-- `project`: The project name
-- `environment`: The environment name
-- `terraform`: "yes"
+- `project`
+- `environment`
+- `terraform = "yes"`
 
 ## License
 

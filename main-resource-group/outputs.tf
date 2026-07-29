@@ -55,12 +55,12 @@ output "admin_group_name" {
 # Budget and Action Group outputs (conditional)
 output "action_group_id" {
   description = "ID of the action group (if budget or health alerts are enabled)"
-  value       = var.enable_budget || var.enable_resource_health_alert ? azurerm_monitor_action_group.main.id : null
+  value       = var.enable_budget || var.enable_resource_health_alert || var.enable_service_health_alert ? azurerm_monitor_action_group.main.id : null
 }
 
 output "action_group_name" {
   description = "Name of the action group (if budget or health alerts are enabled)"
-  value       = var.enable_budget || var.enable_resource_health_alert ? azurerm_monitor_action_group.main.name : null
+  value       = var.enable_budget || var.enable_resource_health_alert || var.enable_service_health_alert ? azurerm_monitor_action_group.main.name : null
 }
 
 output "budget_id" {
@@ -73,6 +73,22 @@ output "budget_name" {
   value       = var.enable_budget ? azurerm_consumption_budget_subscription.main[0].name : null
 }
 
-# Resource Health Alert outputs (conditional)
-# Note: Outputs are not available when using the resource-health-alert module
-# The module encapsulates the implementation details
+output "health_alert_id" {
+  description = "ID of the ResourceHealth alert (if enabled)"
+  value       = var.enable_resource_health_alert ? try(module.resource_health_alert[0].resource_health_alert_id, null) : null
+}
+
+output "health_alert_name" {
+  description = "Name of the ResourceHealth alert (if enabled)"
+  value       = var.enable_resource_health_alert ? try(module.resource_health_alert[0].resource_health_alert_name, null) : null
+}
+
+output "service_health_alert_id" {
+  description = "ID of the ServiceHealth alert (if enabled)"
+  value       = var.enable_service_health_alert ? try(module.resource_health_alert[0].service_health_alert_id, null) : null
+}
+
+output "service_health_alert_name" {
+  description = "Name of the ServiceHealth alert (if enabled)"
+  value       = var.enable_service_health_alert ? try(module.resource_health_alert[0].service_health_alert_name, null) : null
+}

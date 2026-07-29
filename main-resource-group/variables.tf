@@ -200,37 +200,114 @@ variable "action_group_short_name_override" {
   }
 }
 
-# Resource Health Alert variables
+# Health Alert variables
 variable "enable_resource_health_alert" {
-  description = "Enable resource health monitoring and alerts"
+  description = "Enable ResourceHealth monitoring and alerts"
   type        = bool
   default     = false
 }
 
+variable "enable_service_health_alert" {
+  description = "Enable ServiceHealth monitoring and alerts"
+  type        = bool
+  default     = false
+}
+
+variable "health_alert_scope_mode" {
+  description = "ResourceHealth filter mode: subscription (default), resource_group, or resource_groups"
+  type        = string
+  default     = "subscription"
+
+  validation {
+    condition     = contains(["subscription", "resource_group", "resource_groups"], var.health_alert_scope_mode)
+    error_message = "health_alert_scope_mode must be one of: subscription, resource_group, resource_groups"
+  }
+
+  validation {
+    condition     = var.health_alert_scope_mode != "resource_groups" || (var.health_alert_resource_groups != null && length(var.health_alert_resource_groups) > 0)
+    error_message = "health_alert_resource_groups must contain at least one entry when health_alert_scope_mode is resource_groups"
+  }
+}
+
+variable "health_alert_resource_groups" {
+  description = "Optional list of resource group names to monitor when health_alert_scope_mode is resource_groups"
+  type        = list(string)
+  default     = null
+
+  validation {
+    condition = var.health_alert_resource_groups == null || alltrue([
+      for resource_group in var.health_alert_resource_groups : trimspace(resource_group) != ""
+    ])
+    error_message = "health_alert_resource_groups cannot contain empty resource group names"
+  }
+}
+
 variable "health_alert_resource_types" {
-  description = "List of resource types to monitor for health status. If not provided, monitors all resource types in the resource group"
+  description = "List of resource types to monitor for ResourceHealth. If not provided, all resource types in the selected scope are monitored"
   type        = list(string)
   default     = null
 }
 
+variable "health_alert_service_events" {
+  description = "Service Health event types to monitor"
+  type        = list(string)
+  default     = ["Incident", "Maintenance", "ActionRequired", "Security"]
+
+  validation {
+    condition = alltrue([
+      for event in var.health_alert_service_events : contains(["Incident", "Maintenance", "Informational", "ActionRequired", "Security"], event)
+    ])
+    error_message = "health_alert_service_events can only contain: Incident, Maintenance, Informational, ActionRequired, Security"
+  }
+
+  validation {
+    condition     = length(var.health_alert_service_events) > 0
+    error_message = "health_alert_service_events must contain at least one event"
+  }
+}
+
+variable "health_alert_service_services" {
+  description = "Optional list of Azure service names to monitor for ServiceHealth"
+  type        = list(string)
+  default     = null
+
+  validation {
+    condition = var.health_alert_service_services == null || alltrue([
+      for service in var.health_alert_service_services : trimspace(service) != ""
+    ])
+    error_message = "health_alert_service_services cannot contain empty service names"
+  }
+}
+
+variable "health_alert_service_locations" {
+  description = "Optional list of Azure locations to monitor for ServiceHealth"
+  type        = list(string)
+  default     = null
+
+  validation {
+    condition = var.health_alert_service_locations == null || alltrue([
+      for location in var.health_alert_service_locations : trimspace(location) != ""
+    ])
+    error_message = "health_alert_service_locations cannot contain empty location names"
+  }
+}
+
 variable "health_alert_email_receivers" {
-  description = "List of email addresses to receive health alerts. Used when enable_resource_health_alert is true and enable_budget is false"
+  description = "Optional list of email addresses to receive health alerts when budget alerts are not enabled"
   type        = list(string)
   default     = []
+
+  validation {
+    condition = !(var.enable_resource_health_alert || var.enable_service_health_alert) || var.enable_budget || (
+      length(var.health_alert_email_receivers) > 0 || length(var.alert_email_receivers) > 0
+    )
+    error_message = "When ResourceHealth or ServiceHealth alerts are enabled without budget alerts, provide at least one email in health_alert_email_receivers or alert_email_receivers"
+  }
 
   validation {
     condition = alltrue([
       for email in var.health_alert_email_receivers : can(regex("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$", email))
     ])
     error_message = "All email addresses in health_alert_email_receivers must be valid email addresses"
-  }
-
-  validation {
-    condition = var.enable_resource_health_alert == false || (
-      var.enable_resource_health_alert == true && (
-        var.enable_budget == true || length(var.health_alert_email_receivers) > 0
-      )
-    )
-    error_message = "When enable_resource_health_alert is true, either enable_budget must be true OR health_alert_email_receivers must contain at least one email address"
   }
 }
