@@ -15,7 +15,9 @@ resource "azurerm_monitor_action_group" "main" {
 
   # Email receivers for health alerts (only when budget is not enabled)
   dynamic "email_receiver" {
-    for_each = var.enable_resource_health_alert && !var.enable_budget ? var.health_alert_email_receivers : []
+    for_each = (var.enable_resource_health_alert || var.enable_service_health_alert) && !var.enable_budget ? (
+      length(var.health_alert_email_receivers) > 0 ? var.health_alert_email_receivers : var.alert_email_receivers
+    ) : []
     content {
       name          = email_receiver.value
       email_address = email_receiver.value
