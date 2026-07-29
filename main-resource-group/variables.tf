@@ -204,7 +204,7 @@ variable "action_group_short_name_override" {
 variable "enable_resource_health_alert" {
   description = "Enable ResourceHealth monitoring and alerts"
   type        = bool
-  default     = true
+  default     = false
 }
 
 variable "enable_service_health_alert" {

@@ -24,9 +24,6 @@ module "main_resource_group" {
   project                     = "myproject"
   environment                 = "dev"
   subscription_id             = "12345678-1234-1234-1234-123456789012"
-
-  # Disable optional monitoring defaults for a minimal setup
-  enable_resource_health_alert = false
 }
 ```
 
@@ -157,7 +154,7 @@ module "main_resource_group" {
 
 | Name                           | Description                                                                      | Type           | Default                                                     | Required |
 | ------------------------------ | -------------------------------------------------------------------------------- | -------------- | ----------------------------------------------------------- | -------- |
-| enable_resource_health_alert   | Enable ResourceHealth integration                                                | `bool`         | `true`                                                      | no       |
+| enable_resource_health_alert   | Enable ResourceHealth integration                                                | `bool`         | `false`                                                     | no       |
 | enable_service_health_alert    | Enable ServiceHealth integration                                                 | `bool`         | `false`                                                     | no       |
 | health_alert_scope_mode        | ResourceHealth filter mode (`subscription`, `resource_group`, `resource_groups`) | `string`       | `"subscription"`                                            | no       |
 | health_alert_resource_groups   | Resource group list used when scope mode is `resource_groups`                    | `list(string)` | `null`                                                      | no       |
