@@ -298,6 +298,13 @@ variable "health_alert_email_receivers" {
   default     = []
 
   validation {
+    condition = !(var.enable_resource_health_alert || var.enable_service_health_alert) || var.enable_budget || (
+      length(var.health_alert_email_receivers) > 0 || length(var.alert_email_receivers) > 0
+    )
+    error_message = "When ResourceHealth or ServiceHealth alerts are enabled without budget alerts, provide at least one email in health_alert_email_receivers or alert_email_receivers"
+  }
+
+  validation {
     condition = alltrue([
       for email in var.health_alert_email_receivers : can(regex("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$", email))
     ])
