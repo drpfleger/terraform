@@ -3,7 +3,7 @@ resource "azurerm_monitor_activity_log_alert" "default_service_health_status" {
   count               = var.enable_service_health_alert ? 1 : 0
   name                = local.service_health_alert_rule_name
   resource_group_name = data.azurerm_resource_group.main.name
-  location            = data.azurerm_resource_group.main.location
+  location            = "Global"
   enabled             = true
 
   scopes = [
