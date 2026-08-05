@@ -10,7 +10,7 @@ Your environment code loads policy JSON files from:
 management-group-policies/<management-group-name>/*.json
 ```
 
-Each JSON file defines the policy display name, rule and assignment name. The folder name supplies the management group where the policy is created.
+Each JSON file defines policy and assignment inputs. The folder name supplies the management group where the policy definition is created.
 
 ### Example policy JSON
 
@@ -23,6 +23,8 @@ Here is the structure used by a policy JSON file with the name `enforce-https.js
 		"platform-management-group"
 	],
 	"assignment_name": "root-https",
+	"assignment_display_name": "Audit HTTPS Only",
+	"assignment_description": "Audits App Services that do not enforce HTTPS.",
 	"policy_display_name": "Audit HTTPS Only on App Services",
 	"policy_mode": "All",
 	"policy_rule": {
@@ -52,9 +54,32 @@ Notes:
 
 - `policy_name` is derived from the JSON file name and should be unique in the management group. Use a descriptive name that reflects the policy's purpose.
 - `assignment_name` must be unique in the management group and should stay within 1-24 characters.
+- `assignment_management_group_ids` contains management group names (group_id values) used as assignment targets.
 - `policy_mode` is usually `Indexed` or `All`.
-- `policy_rule` must follow the Azure Policy JSON schema.
+- `policy_rule` must be a structured JSON object that follows the Azure Policy JSON schema.
 - `meta_data` is optional and can include additional information about the policy definition.
+- `assignment_display_name` and `assignment_description` are optional.
+
+## Input contract
+
+Required JSON fields:
+
+- `assignment_management_group_ids` (list of management group names/group_id values)
+- `assignment_name` (string, 1-24 chars)
+- `policy_display_name` (string)
+- `policy_mode` (string)
+- `policy_rule` (object)
+
+Optional JSON fields:
+
+- `assignment_display_name` (string)
+- `assignment_description` (string)
+- `meta_data` (object)
+
+Derived by environment code (not part of JSON):
+
+- `definition_management_group` from folder name `management-group-policies/<management-group-name>/...`
+- `policy_name` from JSON file name without `.json`
 
 ## Usage
 
@@ -83,12 +108,15 @@ locals {
   management_group_policy_files = fileset("${path.module}/management-group-policies", "**/*.json")
 
   # Normalize the JSON files into a map with necessary inputs for the module
+  # External JSON uses assignment_management_group_ids;
+  # module input expects assignment_management_groups.
   management_group_policies = {
     for f in local.management_group_policy_files : f => merge(
       jsondecode(file("${path.module}/management-group-policies/${f}")),
       {
-        definition_management_group_name = split("/", f)[0]
-        policy_name                      = trimsuffix(basename(f), ".json")
+        definition_management_group  = split("/", f)[0]
+        policy_name                  = trimsuffix(basename(f), ".json")
+        assignment_management_groups = jsondecode(file("${path.module}/management-group-policies/${f}")).assignment_management_group_ids
       }
     )
   }
@@ -103,10 +131,12 @@ module "management_group_policies" {
   policy_name         = each.value.policy_name
   policy_display_name = each.value.policy_display_name
   policy_rule         = each.value.policy_rule
-  meta_data           = each.value.meta_data
+  meta_data           = try(each.value.meta_data, null)
   assignment_name     = each.value.assignment_name
-  management_group    = each.value.assignment_management_group_name
-  definition_management_group = each.value.definition_management_group_name
+  assignment_display_name      = try(each.value.assignment_display_name, "")
+  assignment_description       = try(each.value.assignment_description, "")
+  assignment_management_groups = each.value.assignment_management_groups
+  definition_management_group  = each.value.definition_management_group
 }
 ```
 
@@ -114,7 +144,8 @@ module "management_group_policies" {
 
 - Discovering the `management-group-policies/<management-group-name>/*.json` files
 - Normalizing JSON into the `local.management_group_policies` map
-- Supplying the `management_group` and other inputs
+- Mapping `assignment_management_group_ids` to `assignment_management_groups`
+- Supplying `definition_management_group`, `assignment_management_groups`, and other module inputs
 
 ## Quick start
 
