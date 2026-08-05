@@ -14,7 +14,7 @@ variable "policy_name" {
 
   validation {
     condition     = length(var.policy_name) >= 1 && length(var.policy_name) <= 64
-    error_message = "policy_name must be between 1 and 24 characters."
+    error_message = "policy_name must be between 1 and 64 characters."
   }
 }
 
@@ -45,7 +45,7 @@ variable "policy_mode" {
 }
 
 variable "policy_rule" {
-  description = "Policy rule in JSON format as a string. Must follow Azure Policy JSON schema."
+  description = "Policy rule as structured JSON data. Must follow Azure Policy JSON schema."
   type        = any
 }
 
@@ -72,7 +72,7 @@ variable "assignment_description" {
 }
 
 variable "meta_data" {
-  description = "Metadata for the policy definition in JSON format as a string."
+  description = "Metadata for the policy definition as structured JSON data."
   type        = any
   default     = null
 }
