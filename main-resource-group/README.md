@@ -107,16 +107,17 @@ module "main_resource_group" {
 
 ### Core
 
-| Name                     | Description                                            | Type     | Default        | Required |
-| ------------------------ | ------------------------------------------------------ | -------- | -------------- | -------- |
-| main_resource_group_name | Name of the central resource group                     | `string` | n/a            | yes      |
-| location                 | Azure resource location                                | `string` | `"westeurope"` | no       |
-| project                  | Project name                                           | `string` | n/a            | yes      |
-| environment              | Environment/stage (`dev`, `sbx`, `tst`, `main`, `prd`) | `string` | n/a            | yes      |
-| subscription_id          | Subscription ID                                        | `string` | n/a            | yes      |
-| group_assignable_to_role | Whether the admin Entra group is role assignable       | `bool`   | `false`        | no       |
-| admin_group_role         | Role assigned to the admin group at subscription scope | `string` | `"Owner"`      | no       |
-| override_keyvault_name   | Optional override for Key Vault name                   | `string` | `null`         | no       |
+| Name                                    | Description                                            | Type     | Default        | Required |
+| --------------------------------------- | ------------------------------------------------------ | -------- | -------------- | -------- |
+| main_resource_group_name                | Name of the central resource group                     | `string` | n/a            | yes      |
+| location                                | Azure resource location                                | `string` | `"westeurope"` | no       |
+| project                                 | Project name                                           | `string` | n/a            | yes      |
+| environment                             | Environment/stage (`dev`, `sbx`, `tst`, `main`, `prd`) | `string` | n/a            | yes      |
+| subscription_id                         | Subscription ID                                        | `string` | n/a            | yes      |
+| group_assignable_to_role                | Whether the admin Entra group is role assignable       | `bool`   | `false`        | no       |
+| admin_group_role                        | Role assigned to the admin group at subscription scope | `string` | `"Owner"`      | no       |
+| override_keyvault_name                  | Optional override for Key Vault name                   | `string` | `null`         | no       |
+| allow_admins_read_state_storage_account | Allow admins to read the state storage account         | `bool`   | `false`        | no       |
 
 ### Key Vault
 

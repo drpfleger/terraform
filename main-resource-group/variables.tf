@@ -318,7 +318,7 @@ variable "override_state_storage_account_name" {
   default     = null
 }
 
-variable "allow_admins_read_storage_account" {
+variable "allow_admins_read_state_storage_account" {
   description = "Allow admins to have read access to the storage account"
   type        = bool
   default     = false
