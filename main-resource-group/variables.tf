@@ -319,7 +319,7 @@ variable "override_state_storage_account_name" {
 }
 
 variable "allow_admins_read_state_storage_account" {
-  description = "Allow admins to have read access to the storage account"
+  description = "Allow admins to read state blobs and list storage account keys"
   type        = bool
   default     = false
 }
