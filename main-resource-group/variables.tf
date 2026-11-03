@@ -312,8 +312,8 @@ variable "health_alert_email_receivers" {
   }
 }
 
-variable "override_storage_account_name" {
-  description = "Override the storage account name"
+variable "override_state_storage_account_name" {
+  description = "Override the state storage account name"
   type        = string
   default     = null
 }

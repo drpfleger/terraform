@@ -7,6 +7,6 @@ data "azurerm_subscription" "main" {
 }
 
 data "azurerm_storage_account" "state" {
-  name                = var.override_storage_account_name != null ? var.override_storage_account_name : local.state_storage_account_name
+  name                = var.override_state_storage_account_name != null ? var.override_state_storage_account_name : local.state_storage_account_name
   resource_group_name = data.azurerm_resource_group.main.name
 }
