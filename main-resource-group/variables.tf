@@ -311,3 +311,15 @@ variable "health_alert_email_receivers" {
     error_message = "All email addresses in health_alert_email_receivers must be valid email addresses"
   }
 }
+
+variable "override_state_storage_account_name" {
+  description = "Override the state storage account name"
+  type        = string
+  default     = null
+}
+
+variable "allow_admins_read_storage_account" {
+  description = "Allow admins to have read access to the storage account"
+  type        = bool
+  default     = false
+}

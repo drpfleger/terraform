@@ -11,3 +11,10 @@ resource "azurerm_role_assignment" "admin_group_subscription_role" {
   role_definition_name = var.admin_group_role
   principal_id         = azuread_group.admin_group.object_id
 }
+
+resource "azurerm_role_assignment" "state_storage_account_role" {
+  count                = var.allow_admins_read_storage_account ? 1 : 0
+  scope                = data.azurerm_storage_account.state.id
+  role_definition_name = "Storage Blob Data Reader"
+  principal_id         = azuread_group.admin_group.object_id
+}
