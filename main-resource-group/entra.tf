@@ -14,14 +14,14 @@ resource "azurerm_role_assignment" "admin_group_subscription_role" {
 
 resource "azurerm_role_assignment" "state_storage_account_role" {
   count                = var.allow_admins_read_state_storage_account ? 1 : 0
-  scope                = data.azurerm_storage_account.state.id
+  scope                = data.azurerm_storage_account.state[0].id
   role_definition_name = "Storage Blob Data Reader"
   principal_id         = azuread_group.admin_group.object_id
 }
 
 resource "azurerm_role_assignment" "state_storage_account_key_operator" {
   count                = var.allow_admins_read_state_storage_account ? 1 : 0
-  scope                = data.azurerm_storage_account.state.id
+  scope                = data.azurerm_storage_account.state[0].id
   role_definition_name = "Storage Account Key Operator Service Role"
   principal_id         = azuread_group.admin_group.object_id
 }
